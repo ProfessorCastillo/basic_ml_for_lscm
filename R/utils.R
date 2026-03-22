@@ -1,0 +1,79 @@
+# Internal utility functions for console interaction and validation
+# None of these are exported.
+
+#' Prompt user and return trimmed input
+#' @noRd
+.ask <- function(prompt) {
+  cat(prompt)
+  trimws(readline())
+}
+
+#' Ask a yes/no question. Returns TRUE for yes, FALSE for no.
+#' @noRd
+.ask_yn <- function(prompt) {
+  repeat {
+    answer <- tolower(.ask(paste0(prompt, " (y/n): ")))
+    if (answer %in% c("y", "yes")) return(TRUE)
+    if (answer %in% c("n", "no")) return(FALSE)
+    cat("Please enter 'y' or 'n'.\n")
+  }
+}
+
+#' Display a numbered menu and return the selected integer.
+#' @noRd
+.menu <- function(title, choices) {
+  cat("\n", title, "\n", sep = "")
+  for (i in seq_along(choices)) {
+    cat("  [", i, "] ", choices[i], "\n", sep = "")
+  }
+  repeat {
+    answer <- .ask("Enter your choice: ")
+    num <- suppressWarnings(as.integer(answer))
+    if (!is.na(num) && num >= 1L && num <= length(choices)) return(num)
+    cat("Please enter a number between 1 and ", length(choices), ".\n", sep = "")
+  }
+}
+
+#' Split a comma-separated string into a trimmed character vector.
+#' @noRd
+.parse_comma_list <- function(input) {
+  parts <- strsplit(input, ",")[[1]]
+  trimws(parts)
+}
+
+#' Validate that all selected names exist in the available names.
+#' Returns a list with $valid (logical) and $bad (character vector of invalid names).
+#' @noRd
+.validate_columns <- function(selected, available) {
+  bad <- selected[!selected %in% available]
+  list(valid = length(bad) == 0L, bad = bad)
+}
+
+#' Print a section header.
+#' @noRd
+.print_header <- function(text) {
+  cat("\n=== ", text, " ===\n\n", sep = "")
+}
+
+#' Print a sub-header.
+#' @noRd
+.print_subheader <- function(text) {
+  cat("\n--- ", text, " ---\n\n", sep = "")
+}
+
+#' Pause and wait for the user to press Enter.
+#' @noRd
+.pause <- function() {
+  .ask("Press Enter to continue...")
+  invisible(NULL)
+}
+
+#' Print a column listing with types.
+#' @noRd
+.print_columns <- function(data) {
+  nms <- names(data)
+  for (i in seq_along(nms)) {
+    col_class <- class(data[[nms[i]]])[1]
+    cat("  [", i, "] ", nms[i], "  (", col_class, ")\n", sep = "")
+  }
+}
