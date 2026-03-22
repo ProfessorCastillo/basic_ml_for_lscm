@@ -8,14 +8,14 @@ stockouts_path <- test_path("testdata", "stockouts.xlsx")
 shipping_path  <- test_path("testdata", "globalShippingTimes.xlsx")
 
 test_that("Full pipeline produces valid ml_result for simple regression", {
-  collect <- basicmlforlscm:::step1_collect(
+  collect <- basicMLforLSCM:::step1_collect(
     stockouts_path, interactive = FALSE,
     outcome = "Stockouts", predictors = "ReorderPoint"
   )
-  prepare <- basicmlforlscm:::step2_prepare(collect, interactive = FALSE)
-  train <- basicmlforlscm:::step3_train(prepare, interactive = FALSE)
-  evaluate <- basicmlforlscm:::step4_evaluate(train, interactive = FALSE)
-  result <- basicmlforlscm:::step5_test(evaluate, interactive = FALSE)
+  prepare <- basicMLforLSCM:::step2_prepare(collect, interactive = FALSE)
+  train <- basicMLforLSCM:::step3_train(prepare, interactive = FALSE)
+  evaluate <- basicMLforLSCM:::step4_evaluate(train, interactive = FALSE)
+  result <- basicMLforLSCM:::step5_test(evaluate, interactive = FALSE)
 
   expect_s3_class(result, "ml_result")
   expect_equal(result$outcome, "Stockouts")
@@ -28,7 +28,7 @@ test_that("Full pipeline produces valid ml_result for simple regression", {
 })
 
 test_that("Full pipeline works with categorical predictors", {
-  collect <- basicmlforlscm:::step1_collect(
+  collect <- basicMLforLSCM:::step1_collect(
     shipping_path, interactive = FALSE,
     outcome = "shipping_time",
     predictors = c("destination_country", "cost", "shipment_mode", "shipping_company"),
@@ -39,10 +39,10 @@ test_that("Full pipeline works with categorical predictors", {
       shipping_company = c("SC1", "SC2", "SC3")
     )
   )
-  prepare <- basicmlforlscm:::step2_prepare(collect, interactive = FALSE)
-  train <- basicmlforlscm:::step3_train(prepare, interactive = FALSE)
-  evaluate <- basicmlforlscm:::step4_evaluate(train, interactive = FALSE)
-  result <- basicmlforlscm:::step5_test(evaluate, interactive = FALSE)
+  prepare <- basicMLforLSCM:::step2_prepare(collect, interactive = FALSE)
+  train <- basicMLforLSCM:::step3_train(prepare, interactive = FALSE)
+  evaluate <- basicMLforLSCM:::step4_evaluate(train, interactive = FALSE)
+  result <- basicMLforLSCM:::step5_test(evaluate, interactive = FALSE)
 
   expect_s3_class(result, "ml_result")
   expect_equal(result$outcome, "shipping_time")
@@ -55,14 +55,14 @@ test_that("Full pipeline works with categorical predictors", {
 })
 
 test_that("All ml_result fields are populated", {
-  collect <- basicmlforlscm:::step1_collect(
+  collect <- basicMLforLSCM:::step1_collect(
     stockouts_path, interactive = FALSE,
     outcome = "Stockouts", predictors = "ReorderPoint"
   )
-  prepare <- basicmlforlscm:::step2_prepare(collect, interactive = FALSE)
-  train <- basicmlforlscm:::step3_train(prepare, interactive = FALSE)
-  evaluate <- basicmlforlscm:::step4_evaluate(train, interactive = FALSE)
-  result <- basicmlforlscm:::step5_test(evaluate, interactive = FALSE)
+  prepare <- basicMLforLSCM:::step2_prepare(collect, interactive = FALSE)
+  train <- basicMLforLSCM:::step3_train(prepare, interactive = FALSE)
+  evaluate <- basicMLforLSCM:::step4_evaluate(train, interactive = FALSE)
+  result <- basicMLforLSCM:::step5_test(evaluate, interactive = FALSE)
 
   expect_true(!is.null(result$data))
   expect_true(!is.null(result$outcome))

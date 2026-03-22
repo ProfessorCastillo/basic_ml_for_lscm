@@ -1,4 +1,4 @@
-# basicmlforlscm
+# Basic Machine Learning for Logistics and Supply Chain Management (basicMLforLSCM)
 
 An interactive R package that guides students through the 5-step supervised machine learning regression workflow using linear regression. Built for **BUSML 4382 — Logistics and Supply Chain Analytics** at The Ohio State University.
 
@@ -12,7 +12,7 @@ install.packages("devtools")
 devtools::install_github("ProfessorCastillo/basic_ml_for_lscm")
 
 # Load the package
-library(basicmlforlscm)
+library(basicMLforLSCM)
 ```
 
 ## Quick Start
@@ -133,7 +133,7 @@ The `export_xlsx()` function creates one workbook with 5 tabs:
 
 ## Requirements
 
-The following packages are installed automatically with `basicmlforlscm`:
+The following packages are installed automatically with `basicMLforLSCM`:
 
 - `readxl` — reading Excel files
 - `caTools` — train/test splitting

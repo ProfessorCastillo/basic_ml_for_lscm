@@ -5,14 +5,14 @@ skip_if_not_installed("openxlsx")
 stockouts_path <- test_path("testdata", "stockouts.xlsx")
 
 build_result <- function() {
-  collect <- basicmlforlscm:::step1_collect(
+  collect <- basicMLforLSCM:::step1_collect(
     stockouts_path, interactive = FALSE,
     outcome = "Stockouts", predictors = "ReorderPoint"
   )
-  prepare <- basicmlforlscm:::step2_prepare(collect, interactive = FALSE)
-  train <- basicmlforlscm:::step3_train(prepare, interactive = FALSE)
-  evaluate <- basicmlforlscm:::step4_evaluate(train, interactive = FALSE)
-  basicmlforlscm:::step5_test(evaluate, interactive = FALSE)
+  prepare <- basicMLforLSCM:::step2_prepare(collect, interactive = FALSE)
+  train <- basicMLforLSCM:::step3_train(prepare, interactive = FALSE)
+  evaluate <- basicMLforLSCM:::step4_evaluate(train, interactive = FALSE)
+  basicMLforLSCM:::step5_test(evaluate, interactive = FALSE)
 }
 
 test_that("export_xlsx creates a file with 5 tabs", {

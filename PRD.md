@@ -450,8 +450,8 @@ basic_ml_for_lscm/
 
 The `AI_ASSISTANT_SYSTEM_PROMPT.md` must reference:
 
-1. **Package installation:** `devtools::install_github("ProfessorCastillo/basic-ml-for-lscm-R")`
-2. **Loading:** `library(basicmlforlscm)`
+1. **Package installation:** `devtools::install_github("ProfessorCastillo/basic_ml_for_lscm")`
+2. **Loading:** `library(basicMLforLSCM)`
 3. **Function names:** `ml_workflow()`, `ml_run()`, `export_xlsx()`, `plot()`, `print()`
 4. **The interactive flow:** Brutus should know which menus appear and what the student sees at each step, so guidance is never contradictory.
 5. **Common errors:** file not found, no xlsx extension, column name typos, forgetting to split before training.

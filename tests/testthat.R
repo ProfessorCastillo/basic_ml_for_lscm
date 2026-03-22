@@ -1,4 +1,4 @@
 library(testthat)
-library(basicmlforlscm)
+library(basicMLforLSCM)
 
-test_check("basicmlforlscm")
+test_check("basicMLforLSCM")
