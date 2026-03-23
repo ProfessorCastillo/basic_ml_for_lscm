@@ -45,11 +45,11 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
   if (interactive) {
     .print_header("Step 5: Test the Model")
 
-    cat("MAD = ", round(mad_val, 4),
+    .lcat("MAD = ", round(mad_val, 4),
         ": On average, predictions are off by ", round(mad_val, 2),
         " units of ", outcome, ".\n\n", sep = "")
 
-    cat("MSE = ", round(mse_val, 4),
+    .lcat("MSE = ", round(mse_val, 4),
         ": Larger errors are penalized more heavily. Use this alongside\n",
         "MAD to get a complete picture of prediction accuracy.\n\n", sep = "")
 
@@ -67,11 +67,11 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
     # Auto-save to working directory
     png_name <- paste0("actual_vs_predicted_", outcome, ".png")
     ggplot2::ggsave(png_name, plot = gg, width = 7, height = 5, dpi = 120)
-    cat("  Plot saved to: ", png_name, "\n", sep = "")
+    .lcat("  Plot saved to: ", png_name, "\n", sep = "")
 
     # --- Go back option ---
     if (.ask_yn("\nWould you like to go back to Step 4 (Evaluate)?")) {
-      cat("\nGoing back to Step 4...\n")
+      .lcat("\nGoing back to Step 4...\n")
       return(list(go_back = TRUE))
     }
 

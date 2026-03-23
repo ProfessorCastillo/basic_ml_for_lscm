@@ -19,6 +19,11 @@ the student makes analytical decisions about their data. Students
 can go back to a previous step at any time without starting over.
 }
 \details{
+The entire interactive session (all output and student responses) is
+captured in a log. It is saved automatically as a \code{.txt} file in
+the working directory and included in the Excel export.
+
+
 The 5 steps are:
 \enumerate{
   \item \strong{Collect Data} -- read the file, identify outcome and predictors

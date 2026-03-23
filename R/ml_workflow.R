@@ -5,6 +5,10 @@
 #' the student makes analytical decisions about their data. Students
 #' can go back to a previous step at any time without starting over.
 #'
+#' The entire interactive session (all output and student responses) is
+#' captured in a log. It is saved automatically as a \code{.txt} file in
+#' the working directory and included in the Excel export.
+#'
 #' @param file_path Character. Path to the student's \code{.xlsx} data file.
 #'
 #' @return An object of class \code{ml_result} (returned invisibly).
@@ -31,24 +35,20 @@
 #'
 #' @export
 ml_workflow <- function(file_path) {
-  # --- Capture console log ---
-  log_file <- tempfile(fileext = ".txt")
-  sink(log_file, split = TRUE)
-  on.exit({
-    if (sink.number() > 0) sink()
-  }, add = TRUE)
+  # --- Start logging ---
+  .log_start()
 
   .print_header("Supervised ML Regression Workflow")
-  cat("Welcome! This tool will guide you through the 5-step supervised\n")
-  cat("machine learning process using linear regression.\n\n")
-  cat("The 5 steps are:\n")
-  cat("  1. Collect Data\n")
-  cat("  2. Prepare the Data\n")
-  cat("  3. Train the Model\n")
-  cat("  4. Evaluate the Model\n")
-  cat("  5. Test the Model\n\n")
-  cat("You will make decisions at each step. You can go back to a\n")
-  cat("previous step at any time. Let's get started!\n")
+  .lcat("Welcome! This tool will guide you through the 5-step supervised\n")
+  .lcat("machine learning process using linear regression.\n\n")
+  .lcat("The 5 steps are:\n")
+  .lcat("  1. Collect Data\n")
+  .lcat("  2. Prepare the Data\n")
+  .lcat("  3. Train the Model\n")
+  .lcat("  4. Evaluate the Model\n")
+  .lcat("  5. Test the Model\n\n")
+  .lcat("You will make decisions at each step. You can go back to a\n")
+  .lcat("previous step at any time. Let's get started!\n")
   .pause()
 
   # State machine: track results from each step
@@ -64,7 +64,7 @@ ml_workflow <- function(file_path) {
     if (current_step == 1L) {
       collect <- step1_collect(file_path, interactive = TRUE)
       if (isTRUE(collect$go_back)) {
-        cat("\nYou're already at Step 1 -- there's no previous step to go back to.\n")
+        .lcat("\nYou're already at Step 1 -- there's no previous step to go back to.\n")
         next
       }
       current_step <- 2L
@@ -103,16 +103,18 @@ ml_workflow <- function(file_path) {
     }
   }
 
-  cat("\nWorkflow complete! Your results are stored in the returned object.\n")
-  cat("Use print(result) to see a summary, plot(result) for visuals,\n")
-  cat("or export_xlsx(result, 'file.xlsx') to export to Excel.\n")
+  .lcat("\nWorkflow complete! Your results are stored in the returned object.\n")
+  .lcat("Use print(result) to see a summary, plot(result) for visuals,\n")
+  .lcat("or export_xlsx(result, 'file.xlsx') to export to Excel.\n")
 
-  # --- Close sink and attach log ---
-  if (sink.number() > 0) sink()
-  if (file.exists(log_file)) {
-    result$log <- readLines(log_file, warn = FALSE)
-    unlink(log_file)
-  }
+  # --- Stop logging, attach to result, and save to file ---
+  session_log <- .log_stop()
+  result$log <- session_log
+
+  # Auto-save log as .txt
+  log_filename <- "ml_workflow_session_log.txt"
+  writeLines(session_log, log_filename)
+  cat("Session log saved to: ", log_filename, "\n", sep = "")
 
   invisible(result)
 }

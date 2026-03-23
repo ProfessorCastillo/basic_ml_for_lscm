@@ -44,24 +44,24 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
 
       if (choice == 7L) {
         # --- Go back ---
-        cat("\nGoing back to Step 1...\n")
+        .lcat("\nGoing back to Step 1...\n")
         return(list(go_back = TRUE))
 
       } else if (choice == 1L) {
         # --- Missing data check ---
         if (!any(is.na(data))) {
-          cat("\nNo missing data found. You're good to proceed.\n")
+          .lcat("\nNo missing data found. You're good to proceed.\n")
         } else {
-          cat("\nMissing data detected!\n")
+          .lcat("\nMissing data detected!\n")
           na_counts <- colSums(is.na(data))
           na_cols <- na_counts[na_counts > 0]
           for (nm in names(na_cols)) {
-            cat("  ", nm, ": ", na_cols[nm], " missing value(s)\n", sep = "")
+            .lcat("  ", nm, ": ", na_cols[nm], " missing value(s)\n", sep = "")
           }
           if (.ask_yn("\nWould you like to remove rows with missing data?")) {
             before <- nrow(data)
             data <- data[stats::complete.cases(data), ]
-            cat("Removed ", before - nrow(data), " rows. ",
+            .lcat("Removed ", before - nrow(data), " rows. ",
                 nrow(data), " rows remaining.\n", sep = "")
           }
         }
@@ -69,9 +69,9 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
       } else if (choice == 2L) {
         # --- Scatter plots (continuous predictors) ---
         if (length(cont_preds) == 0) {
-          cat("\nNo continuous predictors to plot.\n")
+          .lcat("\nNo continuous predictors to plot.\n")
         } else {
-          cat("\n")
+          .lcat("\n")
           for (i in seq_along(cont_preds)) {
             pred <- cont_preds[i]
             plot_title <- paste("Impact of", pred, "on", outcome)
@@ -93,15 +93,15 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
 
             if (i < length(cont_preds)) .pause()
           }
-          cat("\nAll scatter plots saved to your working directory.\n")
+          .lcat("\nAll scatter plots saved to your working directory.\n")
         }
 
       } else if (choice == 3L) {
         # --- Box plots (categorical predictors) ---
         if (is.null(categorical) || length(categorical) == 0) {
-          cat("\nNo categorical predictors declared. Skipping.\n")
+          .lcat("\nNo categorical predictors declared. Skipping.\n")
         } else {
-          cat("\n")
+          .lcat("\n")
           for (i in seq_along(categorical)) {
             cname <- categorical[i]
             plot_title <- paste(outcome, "by", cname)
@@ -121,20 +121,20 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
 
             if (i < length(categorical)) .pause()
           }
-          cat("\nAll box plots saved to your working directory.\n")
+          .lcat("\nAll box plots saved to your working directory.\n")
         }
 
       } else if (choice == 4L) {
         # --- Correlation matrix ---
         cor_vars <- c(cont_preds, outcome)
         if (length(cor_vars) < 2) {
-          cat("\nNeed at least 2 continuous variables for a correlation matrix.\n")
+          .lcat("\nNeed at least 2 continuous variables for a correlation matrix.\n")
         } else {
           cor_data <- data[, cor_vars, drop = FALSE]
           # Ensure all numeric
           cor_data <- cor_data[, vapply(cor_data, is.numeric, logical(1)), drop = FALSE]
           if (ncol(cor_data) < 2) {
-            cat("\nNot enough numeric columns for a correlation matrix.\n")
+            .lcat("\nNot enough numeric columns for a correlation matrix.\n")
           } else {
             # Display in RStudio
             corrplot::corrplot(stats::cor(cor_data), type = "lower",
@@ -147,10 +147,10 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
                                method = "number", tl.cex = 0.8, number.cex = 0.8)
             .save_plot_done(png_name)
 
-            cat("\nInterpretation: Look for predictors with strong correlations to your\n")
-            cat("outcome (closer to +1 or -1). Also watch for predictors that are\n")
-            cat("highly correlated with each other -- this may cause multicollinearity\n")
-            cat("issues in Step 4.\n")
+            .lcat("\nInterpretation: Look for predictors with strong correlations to your\n")
+            .lcat("outcome (closer to +1 or -1). Also watch for predictors that are\n")
+            .lcat("highly correlated with each other -- this may cause multicollinearity\n")
+            .lcat("issues in Step 4.\n")
           }
         }
 
@@ -167,7 +167,7 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
               split_ratio <- pct / 100
               break
             }
-            cat("Please enter a number between 1 and 99.\n")
+            .lcat("Please enter a number between 1 and 99.\n")
           }
         } else {
           split_ratio <- 0.8
@@ -179,15 +179,15 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
         test_set  <- data[!split_flag, ]
         split_done <- TRUE
 
-        cat("\nTraining set: ", nrow(train_set), " observations (",
+        .lcat("\nTraining set: ", nrow(train_set), " observations (",
             round(split_ratio * 100), "%)\n", sep = "")
-        cat("Testing set:  ", nrow(test_set), " observations (",
+        .lcat("Testing set:  ", nrow(test_set), " observations (",
             round((1 - split_ratio) * 100), "%)\n", sep = "")
 
       } else if (choice == 6L) {
         # --- Continue ---
         if (!split_done) {
-          cat("\nYou haven't split the data yet. Please complete task [5] first.\n")
+          .lcat("\nYou haven't split the data yet. Please complete task [5] first.\n")
         } else {
           break
         }

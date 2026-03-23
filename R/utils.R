@@ -1,11 +1,51 @@
 # Internal utility functions for console interaction and validation
 # None of these are exported.
 
-#' Prompt user and return trimmed input
+# --- Session log ---
+# Package-level environment to accumulate log lines during ml_workflow().
+.ml_env <- new.env(parent = emptyenv())
+.ml_env$log <- character(0)
+.ml_env$logging <- FALSE
+
+#' Start logging.
+#' @noRd
+.log_start <- function() {
+  .ml_env$log <- character(0)
+  .ml_env$logging <- TRUE
+}
+
+#' Stop logging and return the accumulated log.
+#' @noRd
+.log_stop <- function() {
+  .ml_env$logging <- FALSE
+  .ml_env$log
+}
+
+#' Append text to the log (if logging is active).
+#' @noRd
+.log_append <- function(...) {
+  if (.ml_env$logging) {
+    text <- paste0(...)
+    .ml_env$log <- c(.ml_env$log, text)
+  }
+}
+
+#' Cat and log. Prints to console AND appends to log.
+#' @noRd
+.lcat <- function(...) {
+  text <- paste0(...)
+  cat(text)
+  .log_append(text)
+}
+
+#' Prompt user and return trimmed input. Logs both prompt and response.
 #' @noRd
 .ask <- function(prompt) {
   cat(prompt)
-  trimws(readline())
+  .log_append(prompt)
+  response <- trimws(readline())
+  .log_append("> ", response, "\n")
+  response
 }
 
 #' Ask a yes/no question. Returns TRUE for yes, FALSE for no.
@@ -15,22 +55,22 @@
     answer <- tolower(.ask(paste0(prompt, " (y/n): ")))
     if (answer %in% c("y", "yes")) return(TRUE)
     if (answer %in% c("n", "no")) return(FALSE)
-    cat("Please enter 'y' or 'n'.\n")
+    .lcat("Please enter 'y' or 'n'.\n")
   }
 }
 
 #' Display a numbered menu and return the selected integer.
 #' @noRd
 .menu <- function(title, choices) {
-  cat("\n", title, "\n", sep = "")
+  .lcat("\n", title, "\n")
   for (i in seq_along(choices)) {
-    cat("  [", i, "] ", choices[i], "\n", sep = "")
+    .lcat("  [", i, "] ", choices[i], "\n")
   }
   repeat {
     answer <- .ask("Enter your choice: ")
     num <- suppressWarnings(as.integer(answer))
     if (!is.na(num) && num >= 1L && num <= length(choices)) return(num)
-    cat("Please enter a number between 1 and ", length(choices), ".\n", sep = "")
+    .lcat("Please enter a number between 1 and ", length(choices), ".\n")
   }
 }
 
@@ -94,13 +134,13 @@
 #' Print a section header.
 #' @noRd
 .print_header <- function(text) {
-  cat("\n=== ", text, " ===\n\n", sep = "")
+  .lcat("\n=== ", text, " ===\n\n")
 }
 
 #' Print a sub-header.
 #' @noRd
 .print_subheader <- function(text) {
-  cat("\n--- ", text, " ---\n\n", sep = "")
+  .lcat("\n--- ", text, " ---\n\n")
 }
 
 #' Pause and wait for the user to press Enter.
@@ -116,12 +156,20 @@
   nms <- names(data)
   for (i in seq_along(nms)) {
     col_class <- class(data[[nms[i]]])[1]
-    cat("  [", i, "] ", nms[i], "  (", col_class, ")\n", sep = "")
+    .lcat("  [", i, "] ", nms[i], "  (", col_class, ")\n")
+  }
+}
+
+#' Print an object and log the output.
+#' @noRd
+.lprint <- function(x, ...) {
+  out <- utils::capture.output(print(x, ...))
+  for (line in out) {
+    .lcat(line, "\n")
   }
 }
 
 #' Save the current plot to a PNG file in the working directory.
-#' Prints a message confirming the save.
 #' @noRd
 .save_plot <- function(filename, width = 800, height = 600) {
   grDevices::png(filename, width = width, height = height, res = 120)
@@ -131,5 +179,5 @@
 #' @noRd
 .save_plot_done <- function(filename) {
   grDevices::dev.off()
-  cat("  Plot saved to: ", filename, "\n", sep = "")
+  .lcat("  Plot saved to: ", filename, "\n")
 }

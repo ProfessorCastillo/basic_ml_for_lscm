@@ -73,17 +73,17 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
 
       if (choice == 4L) {
         # --- Go back ---
-        cat("\nGoing back to Step 3...\n")
+        .lcat("\nGoing back to Step 3...\n")
         return(list(go_back = TRUE))
 
       } else if (choice == 1L) {
         # --- VIF ---
         vif_df <- compute_vif(model)
         if (is.null(vif_df)) {
-          cat("\nVIF requires at least 2 predictors. Skipping.\n")
+          .lcat("\nVIF requires at least 2 predictors. Skipping.\n")
         } else {
-          cat("\n")
-          print(vif_df, row.names = FALSE)
+          .lcat("\n")
+          .lprint(vif_df, row.names = FALSE)
 
           # Flag high VIF
           if ("VIF" %in% names(vif_df)) {
@@ -92,31 +92,31 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
             high <- vif_df$Variable[vif_df$GVIF_adjusted > 5]
           }
           if (length(high) > 0) {
-            cat("\nWARNING: The following variable(s) have VIF > 5: ",
+            .lcat("\nWARNING: The following variable(s) have VIF > 5: ",
                 paste(high, collapse = ", "), "\n", sep = "")
-            cat("This indicates problematic multicollinearity. Consider removing\n")
-            cat("one of the highly correlated predictors in the 'Improve' step.\n")
+            .lcat("This indicates problematic multicollinearity. Consider removing\n")
+            .lcat("one of the highly correlated predictors in the 'Improve' step.\n")
           } else {
-            cat("\nAll VIF values are below 5. No multicollinearity concerns.\n")
+            .lcat("\nAll VIF values are below 5. No multicollinearity concerns.\n")
           }
         }
 
       } else if (choice == 2L) {
         # --- Improve model ---
-        cat("\nCurrent predictors: ", paste(predictors, collapse = ", "), "\n", sep = "")
+        .lcat("\nCurrent predictors: ", paste(predictors, collapse = ", "), "\n", sep = "")
 
         # Show p-values
-        cat("\nP-values:\n")
+        .lcat("\nP-values:\n")
         for (i in seq_len(nrow(coefficients_df))) {
           if (coefficients_df$Variable[i] == "(Intercept)") next
-          cat("  ", coefficients_df$Variable[i], ": ",
+          .lcat("  ", coefficients_df$Variable[i], ": ",
               formatC(coefficients_df$p.value[i], format = "e", digits = 3), "\n", sep = "")
         }
 
         # Show VIF if computed
         if (!is.null(vif_df)) {
-          cat("\nVIF values:\n")
-          print(vif_df, row.names = FALSE)
+          .lcat("\nVIF values:\n")
+          .lprint(vif_df, row.names = FALSE)
         }
 
         # --- Remove variable loop ---
@@ -125,7 +125,7 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
 
           remove_name <- .ask("Which variable would you like to remove? Enter the name: ")
           if (!remove_name %in% predictors) {
-            cat("'", remove_name, "' is not in your current predictors. Try again.\n", sep = "")
+            .lcat("'", remove_name, "' is not in your current predictors. Try again.\n", sep = "")
             next
           }
 
@@ -133,7 +133,7 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
           if (!is.null(categorical)) {
             categorical <- intersect(categorical, predictors)
           }
-          cat("Removed '", remove_name, "'. Re-training model...\n\n", sep = "")
+          .lcat("Removed '", remove_name, "'. Re-training model...\n\n", sep = "")
 
           model <- retrain_model(predictors, train_set)
           model_summary <- summary(model)
@@ -156,14 +156,14 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
           display_df$t.value <- round(display_df$t.value, 4)
           display_df$p.value <- formatC(display_df$p.value, format = "e", digits = 3)
           print(display_df, row.names = FALSE)
-          cat("\nR-squared: ", round(r_squared, 4),
+          .lcat("\nR-squared: ", round(r_squared, 4),
               "  |  RSE: ", round(rse, 4), "\n", sep = "")
 
           # Update VIF
           vif_df <- compute_vif(model)
           if (!is.null(vif_df)) {
-            cat("\nUpdated VIF:\n")
-            print(vif_df, row.names = FALSE)
+            .lcat("\nUpdated VIF:\n")
+            .lprint(vif_df, row.names = FALSE)
           }
         }
 
@@ -190,27 +190,27 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
               r_squared <- model_summary$r.squared
               rse <- model_summary$sigma
 
-              cat("\nModel updated with interaction ", inter_input, ".\n\n", sep = "")
+              .lcat("\nModel updated with interaction ", inter_input, ".\n\n", sep = "")
               display_df <- coefficients_df
               display_df$Estimate <- round(display_df$Estimate, 4)
               display_df$Std.Error <- round(display_df$Std.Error, 4)
               display_df$t.value <- round(display_df$t.value, 4)
               display_df$p.value <- formatC(display_df$p.value, format = "e", digits = 3)
-              print(display_df, row.names = FALSE)
-              cat("\nR-squared: ", round(r_squared, 4),
+              .lprint(display_df, row.names = FALSE)
+              .lcat("\nR-squared: ", round(r_squared, 4),
                   "  |  RSE: ", round(rse, 4), "\n", sep = "")
             } else {
-              cat("Variable(s) not found: ", paste(check$bad, collapse = ", "),
+              .lcat("Variable(s) not found: ", paste(check$bad, collapse = ", "),
                   ". Interaction not added.\n", sep = "")
             }
           } else {
-            cat("Could not parse interaction. Expected format: var1*var2\n")
+            .lcat("Could not parse interaction. Expected format: var1*var2\n")
           }
         }
 
-        cat("\nReminder: Any addition or removal of variables must be justified with a\n")
-        cat("sound, logical argument. Avoid 'fishing expeditions' -- changes should\n")
-        cat("be grounded in business reasoning.\n")
+        .lcat("\nReminder: Any addition or removal of variables must be justified with a\n")
+        .lcat("sound, logical argument. Avoid 'fishing expeditions' -- changes should\n")
+        .lcat("be grounded in business reasoning.\n")
 
       } else if (choice == 3L) {
         break
