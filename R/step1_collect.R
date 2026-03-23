@@ -43,11 +43,14 @@ step1_collect <- function(file_path, interactive = TRUE,
       .print_columns(data)
 
       # --- Outcome variable ---
+      cat("\nYou can enter a column name or its number (e.g., 3 or [3]).\n")
+      cat("Column names are case-sensitive.\n")
       repeat {
-        outcome <- .ask("\nWhich column is your outcome variable (Y)? Enter the column name: ")
-        check <- .validate_columns(outcome, names(data))
-        if (check$valid) break
-        cat("Column '", outcome, "' not found. Please try again.\n", sep = "")
+        outcome_input <- .ask("\nWhich column is your outcome variable (Y)? ")
+        outcome <- .resolve_column(outcome_input, names(data))
+        if (!is.null(outcome)) break
+        cat("'", outcome_input, "' not found. Check spelling and case, ",
+            "or enter the column number.\n", sep = "")
       }
 
       # --- Categorical variables ---
@@ -56,25 +59,42 @@ step1_collect <- function(file_path, interactive = TRUE,
       has_cat <- .ask_yn("\nDo you have any categorical predictor variables?")
 
       if (has_cat) {
+        cat("Enter the categorical column name(s) separated by commas,\n")
+        cat("or press Enter with no input to skip.\n")
         repeat {
-          cat_input <- .ask("Which column(s) are categorical? Enter name(s) separated by commas: ")
-          categorical <- .parse_comma_list(cat_input)
-          check <- .validate_columns(categorical, names(data))
-          if (check$valid) break
+          cat_input <- .ask("Categorical column(s): ")
+          cat_parsed <- .parse_comma_list(cat_input)
+
+          # Empty input = escape hatch
+          if (length(cat_parsed) == 0L) {
+            if (.ask_yn("No columns entered. Skip categorical variables?")) {
+              categorical <- NULL
+              break
+            }
+            next
+          }
+
+          check <- .resolve_columns(cat_parsed, names(data))
+          if (check$valid) {
+            categorical <- check$resolved
+            break
+          }
           cat("Column(s) not found: ", paste(check$bad, collapse = ", "),
-              ". Please try again.\n", sep = "")
+              ". Please try again, or press Enter to skip.\n", sep = "")
         }
 
-        factor_levels <- list()
-        for (cname in categorical) {
-          lvl_input <- .ask(paste0(
-            "\nWhat are the levels for '", cname,
-            "'? Enter them separated by commas\n",
-            "(the first one listed becomes the reference level): "
-          ))
-          lvls <- .parse_comma_list(lvl_input)
-          factor_levels[[cname]] <- lvls
-          data[[cname]] <- factor(data[[cname]], levels = lvls)
+        if (!is.null(categorical) && length(categorical) > 0) {
+          factor_levels <- list()
+          for (cname in categorical) {
+            lvl_input <- .ask(paste0(
+              "\nWhat are the levels for '", cname,
+              "'? Enter them separated by commas\n",
+              "(the first one listed becomes the reference level): "
+            ))
+            lvls <- .parse_comma_list(lvl_input)
+            factor_levels[[cname]] <- lvls
+            data[[cname]] <- factor(data[[cname]], levels = lvls)
+          }
         }
       }
 
@@ -82,13 +102,20 @@ step1_collect <- function(file_path, interactive = TRUE,
       available <- setdiff(names(data), outcome)
       cat("\nAvailable columns (excluding outcome):\n")
       for (i in seq_along(available)) {
-        cat("  ", available[i], "\n", sep = "")
+        cat("  [", i, "] ", available[i], "\n", sep = "")
       }
       repeat {
-        pred_input <- .ask("\nWhich columns are your predictor variables (X)? Enter name(s) separated by commas: ")
-        predictors <- .parse_comma_list(pred_input)
-        check <- .validate_columns(predictors, available)
-        if (check$valid) break
+        pred_input <- .ask("\nWhich columns are your predictor variables (X)? Enter name(s) or number(s) separated by commas: ")
+        pred_parsed <- .parse_comma_list(pred_input)
+        if (length(pred_parsed) == 0L) {
+          cat("Please enter at least one predictor.\n")
+          next
+        }
+        check <- .resolve_columns(pred_parsed, available)
+        if (check$valid) {
+          predictors <- check$resolved
+          break
+        }
         cat("Column(s) not found: ", paste(check$bad, collapse = ", "),
             ". Please try again.\n", sep = "")
       }

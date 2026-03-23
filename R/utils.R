@@ -35,10 +35,14 @@
 }
 
 #' Split a comma-separated string into a trimmed character vector.
+#' Returns character(0) for empty/whitespace-only input.
 #' @noRd
 .parse_comma_list <- function(input) {
+  input <- trimws(input)
+  if (nchar(input) == 0L) return(character(0))
   parts <- strsplit(input, ",")[[1]]
-  trimws(parts)
+  parts <- trimws(parts)
+  parts[nchar(parts) > 0L]
 }
 
 #' Validate that all selected names exist in the available names.
@@ -47,6 +51,44 @@
 .validate_columns <- function(selected, available) {
   bad <- selected[!selected %in% available]
   list(valid = length(bad) == 0L, bad = bad)
+}
+
+#' Resolve a column reference that may be a name, number, or wrong case.
+#' Returns the corrected column name, or NULL if not found.
+#' @noRd
+.resolve_column <- function(input, available) {
+  input <- trimws(input)
+  # Try exact match first
+  if (input %in% available) return(input)
+  # Try as a number (e.g., "3" or "[3]")
+  num_str <- gsub("[\\[\\]]", "", input, perl = TRUE)
+  num <- suppressWarnings(as.integer(num_str))
+  if (!is.na(num) && num >= 1L && num <= length(available)) {
+    return(available[num])
+  }
+  # Try case-insensitive match
+  match_idx <- which(tolower(available) == tolower(input))
+  if (length(match_idx) == 1L) {
+    return(available[match_idx])
+  }
+  NULL
+}
+
+#' Resolve a comma-separated list of column references.
+#' Returns a list with $resolved (character vector) and $bad (character vector).
+#' @noRd
+.resolve_columns <- function(input_vec, available) {
+  resolved <- character(0)
+  bad <- character(0)
+  for (inp in input_vec) {
+    r <- .resolve_column(inp, available)
+    if (!is.null(r)) {
+      resolved <- c(resolved, r)
+    } else {
+      bad <- c(bad, inp)
+    }
+  }
+  list(resolved = resolved, bad = bad, valid = length(bad) == 0L)
 }
 
 #' Print a section header.
