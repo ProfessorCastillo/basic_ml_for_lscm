@@ -31,6 +31,13 @@
 #'
 #' @export
 ml_workflow <- function(file_path) {
+  # --- Capture console log ---
+  log_file <- tempfile(fileext = ".txt")
+  sink(log_file, split = TRUE)
+  on.exit({
+    if (sink.number() > 0) sink()
+  }, add = TRUE)
+
   .print_header("Supervised ML Regression Workflow")
   cat("Welcome! This tool will guide you through the 5-step supervised\n")
   cat("machine learning process using linear regression.\n\n")
@@ -99,6 +106,13 @@ ml_workflow <- function(file_path) {
   cat("\nWorkflow complete! Your results are stored in the returned object.\n")
   cat("Use print(result) to see a summary, plot(result) for visuals,\n")
   cat("or export_xlsx(result, 'file.xlsx') to export to Excel.\n")
+
+  # --- Close sink and attach log ---
+  if (sink.number() > 0) sink()
+  if (file.exists(log_file)) {
+    result$log <- readLines(log_file, warn = FALSE)
+    unlink(log_file)
+  }
 
   invisible(result)
 }

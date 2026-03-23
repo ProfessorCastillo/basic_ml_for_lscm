@@ -122,6 +122,7 @@ The `export_xlsx()` function creates one workbook with 5 tabs:
 | **VIF** | Variance Inflation Factor values for each predictor |
 | **Predictions** | Actual values, predicted values, errors, and absolute errors |
 | **Accuracy** | MAD and MSE |
+| **Console Log** | Full record of the interactive session (decisions, outputs, interpretations) |
 
 ## Function Reference
 

@@ -66,6 +66,13 @@ export_xlsx <- function(x, file) {
   openxlsx::addWorksheet(wb, "Accuracy")
   openxlsx::writeData(wb, "Accuracy", acc_df)
 
+  # Tab 6: Console Log (if available)
+  if (!is.null(x$log) && length(x$log) > 0) {
+    log_df <- data.frame(Console_Output = x$log)
+    openxlsx::addWorksheet(wb, "Console Log")
+    openxlsx::writeData(wb, "Console Log", log_df)
+  }
+
   openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
   cat("Results exported to: ", file, "\n", sep = "")
 
