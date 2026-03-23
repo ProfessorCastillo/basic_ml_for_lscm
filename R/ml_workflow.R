@@ -133,7 +133,7 @@ ml_workflow <- function(file_path) {
   # --- Export prompt (after log is attached) ---
   if (.ask_yn("Would you like to export all results to an Excel file?")) {
     suggested <- paste0(.ml_env$student_name, "_results.xlsx")
-    file_name <- .ask(paste0("Enter file name (suggested: ", suggested, "): "))
+    file_name <- .ask(paste0("Enter file name or press Enter to accept [", suggested, "]: "))
     if (nchar(trimws(file_name)) == 0L) file_name <- suggested
     if (!grepl("\\.xlsx$", file_name, ignore.case = TRUE)) {
       file_name <- paste0(file_name, ".xlsx")
