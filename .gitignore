@@ -4,3 +4,6 @@
 .Ruserdata
 *.Rproj
 .DS_Store
+tests/testthat/Rplots.pdf
+tests/testthat/_problems/
+DRAFT_ML_Case_Study.md

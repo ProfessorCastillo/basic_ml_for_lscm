@@ -118,17 +118,31 @@ ml_workflow <- function(file_path) {
   }
 
   .lcat("\nWorkflow complete! Your results are stored in the returned object.\n")
-  .lcat("Use print(result) to see a summary, plot(result) for visuals,\n")
-  .lcat("or export_xlsx(result, 'file.xlsx') to export to Excel.\n")
 
   # --- Stop logging, attach to result, and save to file ---
   session_log <- .log_stop()
   result$log <- session_log
+  result$student_name <- .ml_env$student_name
+  result$student_seed <- .ml_env$student_seed
 
   # Auto-save log as .txt with student name
   log_filename <- paste0(.ml_env$student_name, "_session_log.txt")
   writeLines(session_log, log_filename)
   cat("Session log saved to: ", log_filename, "\n", sep = "")
+
+  # --- Export prompt (after log is attached) ---
+  if (.ask_yn("Would you like to export all results to an Excel file?")) {
+    suggested <- paste0(.ml_env$student_name, "_results.xlsx")
+    file_name <- .ask(paste0("Enter file name (suggested: ", suggested, "): "))
+    if (nchar(trimws(file_name)) == 0L) file_name <- suggested
+    if (!grepl("\\.xlsx$", file_name, ignore.case = TRUE)) {
+      file_name <- paste0(file_name, ".xlsx")
+    }
+    export_xlsx(result, file_name)
+  }
+
+  cat("\nUse print(result) to see a summary, plot(result) for visuals,\n")
+  cat("or export_xlsx(result, 'file.xlsx') to export to Excel.\n")
 
   invisible(result)
 }
