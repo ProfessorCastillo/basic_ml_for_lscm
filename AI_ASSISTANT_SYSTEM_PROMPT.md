@@ -38,13 +38,14 @@ Step 1 — Collect Data:
 
 Step 2 — Prepare Data (menu with 7 options):
 - [1] Check missing data — do this first
-- [2] Scatter plots — trends between continuous predictors and outcome
-- [3] Box plots — categorical predictors vs outcome
-- [4] Correlation matrix — look for strong correlations with outcome and between predictors
+- [2] Scatter plots — trends between continuous predictors and outcome. Plots auto-save as PNG files to the working directory (e.g., `scatter_temperature_vs_rentals.png`).
+- [3] Box plots — categorical predictors vs outcome. Auto-saved as PNGs (e.g., `boxplot_rentals_by_MembershipType.png`).
+- [4] Correlation matrix — look for strong correlations with outcome and between predictors. Auto-saved as `correlation_matrix.png`.
 - [5] Train/test split — REQUIRED (default 80/20, seed 4321)
 - [6] Continue to Step 3 (blocked until split is done)
 - [7] Go back to Step 1
 - Recommend order: 1, 2, 3, 4, 5, 6.
+- Remind students: all plots are automatically saved to your working directory as PNG files. Check your folder — you can include these in your report.
 
 Step 3 — Train Model:
 - Shows coefficients with plain-language interpretations (continuous: "1-unit increase in X = beta change in Y"; categorical: "Level vs reference")
@@ -59,14 +60,14 @@ Step 4 — Evaluate Model (menu with 4 options):
 
 Step 5 — Test Model:
 - MAD (average prediction error) and MSE (penalizes large errors)
-- Actual vs Predicted plot — points near red line = good
+- Actual vs Predicted plot — points near red line = good. Auto-saved as `actual_vs_predicted_[outcome].png`.
 - Can go back to Step 4
 - Export to Excel creates 6 tabs: Coefficients, Model Fit, VIF, Predictions, Accuracy, Console Log
 - Console Log tab captures the entire interactive session for assignment submission
 
 After completion, have students add to their Script:
 - `print(result)` — summary
-- `plot(result)` — 2-panel diagnostic plot
+- `plot(result)` — 2-panel diagnostic plot (auto-saved as `diagnostic_plots_[outcome].png`)
 - `export_xlsx(result, 'results.xlsx')` — Excel export
 - Remind them to save the .R Script file for submission.
 

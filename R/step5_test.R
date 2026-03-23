@@ -64,6 +64,11 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
       )
     print(gg)
 
+    # Auto-save to working directory
+    png_name <- paste0("actual_vs_predicted_", outcome, ".png")
+    ggplot2::ggsave(png_name, plot = gg, width = 7, height = 5, dpi = 120)
+    cat("  Plot saved to: ", png_name, "\n", sep = "")
+
     # --- Go back option ---
     if (.ask_yn("\nWould you like to go back to Step 4 (Evaluate)?")) {
       cat("\nGoing back to Step 4...\n")

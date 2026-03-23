@@ -71,14 +71,29 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
         if (length(cont_preds) == 0) {
           cat("\nNo continuous predictors to plot.\n")
         } else {
+          cat("\n")
           for (i in seq_along(cont_preds)) {
             pred <- cont_preds[i]
+            plot_title <- paste("Impact of", pred, "on", outcome)
+
+            # Display in RStudio
             graphics::plot(data[[pred]], data[[outcome]],
                            xlab = pred, ylab = outcome,
-                           main = paste("Impact of", pred, "on", outcome),
+                           main = plot_title,
                            pch = 16, col = "steelblue")
+
+            # Auto-save to working directory
+            png_name <- paste0("scatter_", pred, "_vs_", outcome, ".png")
+            .save_plot(png_name)
+            graphics::plot(data[[pred]], data[[outcome]],
+                           xlab = pred, ylab = outcome,
+                           main = plot_title,
+                           pch = 16, col = "steelblue")
+            .save_plot_done(png_name)
+
             if (i < length(cont_preds)) .pause()
           }
+          cat("\nAll scatter plots saved to your working directory.\n")
         }
 
       } else if (choice == 3L) {
@@ -86,13 +101,27 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
         if (is.null(categorical) || length(categorical) == 0) {
           cat("\nNo categorical predictors declared. Skipping.\n")
         } else {
+          cat("\n")
           for (i in seq_along(categorical)) {
             cname <- categorical[i]
+            plot_title <- paste(outcome, "by", cname)
+
+            # Display in RStudio
             graphics::boxplot(data[[outcome]] ~ data[[cname]],
                               xlab = cname, ylab = outcome,
-                              main = paste(outcome, "by", cname))
+                              main = plot_title)
+
+            # Auto-save to working directory
+            png_name <- paste0("boxplot_", outcome, "_by_", cname, ".png")
+            .save_plot(png_name)
+            graphics::boxplot(data[[outcome]] ~ data[[cname]],
+                              xlab = cname, ylab = outcome,
+                              main = plot_title)
+            .save_plot_done(png_name)
+
             if (i < length(categorical)) .pause()
           }
+          cat("\nAll box plots saved to your working directory.\n")
         }
 
       } else if (choice == 4L) {
@@ -107,8 +136,17 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
           if (ncol(cor_data) < 2) {
             cat("\nNot enough numeric columns for a correlation matrix.\n")
           } else {
+            # Display in RStudio
             corrplot::corrplot(stats::cor(cor_data), type = "lower",
                                method = "number", tl.cex = 0.8, number.cex = 0.8)
+
+            # Auto-save to working directory
+            png_name <- "correlation_matrix.png"
+            .save_plot(png_name)
+            corrplot::corrplot(stats::cor(cor_data), type = "lower",
+                               method = "number", tl.cex = 0.8, number.cex = 0.8)
+            .save_plot_done(png_name)
+
             cat("\nInterpretation: Look for predictors with strong correlations to your\n")
             cat("outcome (closer to +1 or -1). Also watch for predictors that are\n")
             cat("highly correlated with each other -- this may cause multicollinearity\n")

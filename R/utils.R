@@ -119,3 +119,17 @@
     cat("  [", i, "] ", nms[i], "  (", col_class, ")\n", sep = "")
   }
 }
+
+#' Save the current plot to a PNG file in the working directory.
+#' Prints a message confirming the save.
+#' @noRd
+.save_plot <- function(filename, width = 800, height = 600) {
+  grDevices::png(filename, width = width, height = height, res = 120)
+}
+
+#' Finish saving a plot (close the device) and print confirmation.
+#' @noRd
+.save_plot_done <- function(filename) {
+  grDevices::dev.off()
+  cat("  Plot saved to: ", filename, "\n", sep = "")
+}

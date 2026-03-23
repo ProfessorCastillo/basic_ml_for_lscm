@@ -120,5 +120,24 @@ plot.ml_result <- function(x, ...) {
                  pch = 16, col = "steelblue")
   graphics::abline(h = 0, col = "red", lwd = 2)
 
+  # Auto-save to working directory
+  png_name <- paste0("diagnostic_plots_", x$outcome, ".png")
+  grDevices::png(png_name, width = 1200, height = 600, res = 120)
+  graphics::par(mfrow = c(1, 2))
+  graphics::plot(x$predictions$Actual, x$predictions$Predicted,
+                 xlab = paste("Actual", x$outcome),
+                 ylab = paste("Predicted", x$outcome),
+                 main = "Actual vs Predicted",
+                 pch = 16, col = "steelblue")
+  graphics::abline(0, 1, col = "red", lwd = 2)
+  graphics::plot(x$predictions$Predicted, residuals,
+                 xlab = paste("Predicted", x$outcome),
+                 ylab = "Residuals",
+                 main = "Residuals vs Predicted",
+                 pch = 16, col = "steelblue")
+  graphics::abline(h = 0, col = "red", lwd = 2)
+  grDevices::dev.off()
+  cat("Plot saved to:", png_name, "\n")
+
   invisible(x)
 }
