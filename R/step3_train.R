@@ -26,7 +26,9 @@ step3_train <- function(prepare_result, interactive = TRUE) {
     .print_header("Step 3: Train the Model")
     .lcat("Current predictors: ", paste(predictors, collapse = ", "), "\n", sep = "")
 
-    if (!.ask_yn("Ready to train the model with these predictors?")) {
+    ready <- .ask_yn("Ready to train the model with these predictors?")
+    Sys.sleep(runif(1, min = 3, max = 5))
+    if (!ready) {
       if (.ask_yn("Would you like to go back to Step 2?")) {
         .lcat("\nGoing back to Step 2...\n")
         return(list(go_back = TRUE))
