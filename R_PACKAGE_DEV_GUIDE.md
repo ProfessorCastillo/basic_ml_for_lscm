@@ -1,6 +1,6 @@
 # R Package Development Guide for Claude Code
 
-A step-by-step playbook for building teaching-oriented R packages with Claude Code. Based on the process used to build the `wagnerwhitin` package for BUSML 4382 at Ohio State.
+A step-by-step playbook for building teaching-oriented R packages with Claude Code. Based on the process used to build the `wagnerwhitin` and `basicMLforLSCM` packages for BUSML 4382 at Ohio State.
 
 **Author:** Professor Vince Castillo
 **Audience:** A Claude Code agent assisting with R package development
@@ -350,3 +350,35 @@ Things that came up during development that are worth knowing ahead of time:
 6. **Always run `devtools::document()` before `devtools::check()`.** Missing `.Rd` files are the most common check warning.
 
 7. **Test expected values by hand first.** Compute at least one example manually to verify the algorithm before writing tests. Tests that encode wrong expected values are worse than no tests.
+
+---
+
+## Iteration Lessons from basicMLforLSCM
+
+Additional lessons from building the interactive ML regression package:
+
+8. **R package names cannot contain underscores.** Only letters, numbers, and dots are allowed. Use camelCase (e.g., `basicMLforLSCM`) for readability. The GitHub repo name can still use underscores (`basic_ml_for_lscm`) — they're independent.
+
+9. **Interactive `readline()` functions can't be tested headlessly.** Design every interactive function with an `interactive = TRUE/FALSE` flag. When `FALSE`, it accepts parameters directly and skips all `readline()` calls. Tests always call with `interactive = FALSE`. This also enables a single-shot non-interactive mode (`ml_run()`) for free.
+
+10. **Students will make input mistakes — design for forgiveness.** Beginners enter column numbers (`[3]`) instead of names, use wrong case (`stockouts` instead of `Stockouts`), and accidentally answer "yes" to the wrong prompt. Build input resolution that accepts numbers, bracket-wrapped numbers, and case-insensitive names. Provide escape hatches (empty input to skip, confirmation prompts to redo).
+
+11. **Go-back navigation is essential for interactive workflows.** Students will advance past a step by mistake. Every step should offer a way to return to the previous step without starting over. Use a state machine in the orchestrating function — each step returns `list(go_back = TRUE)` to signal backward navigation, and the orchestrator decrements to the previous step.
+
+12. **State passing via lists, not global variables.** Chain step functions by having each return a list that the next step unpacks. Each result is a superset of the previous (carries all prior fields plus new ones). This keeps state explicit and testable.
+
+13. **`car::vif()` output format changes with categorical predictors.** It returns a named numeric vector for continuous-only models, but a matrix with GVIF/Df/GVIF^(1/(2*Df)) columns when factors are present. Check `is.matrix()` to detect which format and display accordingly.
+
+14. **`ggplot2` plots don't render inside functions without `print()`.** When calling `ggplot()` inside a function, you must explicitly `print(gg)` for the plot to appear. Base R `plot()` renders automatically. The `plot.ml_result()` S3 method uses base R for 2-panel layouts to avoid this issue.
+
+15. **`.Rbuildignore` vs `.gitignore` serve different purposes.** `.Rbuildignore` excludes files from the R package tarball but keeps them in the repo. `.gitignore` excludes files from git entirely. Planning docs (PRD, implementation plan, AI prompts) go in `.Rbuildignore` so they're pushed to GitHub but don't ship with `install.packages()`.
+
+16. **Don't list unused packages in Imports.** R CMD check flags any package in the `Imports` field of DESCRIPTION that isn't actually imported via `@importFrom` or `::`. If you remove a dependency from the code, remove it from DESCRIPTION too. During the basicMLforLSCM build, `dplyr` and `utils` were initially listed but never used, causing NOTEs.
+
+17. **GitHub repo initialization conflicts.** If the GitHub repo was created with a README or LICENSE via the web UI, `git push` will be rejected on the first push. Use `git pull --rebase --allow-unrelated-histories` to integrate the remote content before pushing. Resolve merge conflicts by keeping your package's versions (especially the DCF-format LICENSE).
+
+18. **Test data files must be included in the package build.** If tests reference xlsx files in `tests/testthat/testdata/`, do NOT add that directory to `.Rbuildignore`. `devtools::test()` runs from the source directory (finds the files), but `R CMD check` builds a tarball first — excluded files won't be in the check environment, and all tests that need them will fail.
+
+19. **Keep the AI assistant prompt in sync with every code change.** When adding features like go-back navigation or flexible input, update the AI assistant system prompt in the same commit or immediately after. Students will ask the AI for help, and stale guidance (e.g., "you'll see 6 options" when there are now 7) causes confusion.
+
+20. **Manual testing with real students catches things unit tests don't.** A student typing `[3]` instead of a column name, or accidentally hitting `y` at the wrong prompt, revealed UX issues that no automated test would surface. Always do a manual walkthrough from the student's perspective before shipping.
