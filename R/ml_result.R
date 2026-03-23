@@ -121,7 +121,8 @@ plot.ml_result <- function(x, ...) {
   graphics::abline(h = 0, col = "red", lwd = 2)
 
   # Auto-save to working directory
-  png_name <- paste0("diagnostic_plots_", x$outcome, ".png")
+  name_prefix <- if (.ml_env$logging || nchar(.ml_env$student_name) > 0) .ml_env$student_name else "student"
+  png_name <- paste0(name_prefix, "_diagnostic_plots_", x$outcome, ".png")
   grDevices::png(png_name, width = 1200, height = 600, res = 120)
   graphics::par(mfrow = c(1, 2))
   graphics::plot(x$predictions$Actual, x$predictions$Predicted,

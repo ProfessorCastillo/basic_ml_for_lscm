@@ -65,7 +65,7 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
     print(gg)
 
     # Auto-save to working directory
-    png_name <- paste0("actual_vs_predicted_", outcome, ".png")
+    png_name <- paste0(.ml_env$student_name, "_actual_vs_predicted_", outcome, ".png")
     ggplot2::ggsave(png_name, plot = gg, width = 7, height = 5, dpi = 120)
     .lcat("  Plot saved to: ", png_name, "\n", sep = "")
 
@@ -77,7 +77,9 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
 
     # --- Export prompt ---
     if (.ask_yn("Would you like to export all results to an Excel file?")) {
-      file_name <- .ask("Enter file name (e.g., results.xlsx): ")
+      suggested <- paste0(.ml_env$student_name, "_results.xlsx")
+      file_name <- .ask(paste0("Enter file name (suggested: ", suggested, "): "))
+      if (nchar(trimws(file_name)) == 0L) file_name <- suggested
       if (!grepl("\\.xlsx$", file_name, ignore.case = TRUE)) {
         file_name <- paste0(file_name, ".xlsx")
       }

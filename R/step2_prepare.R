@@ -83,7 +83,7 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
                            pch = 16, col = "steelblue")
 
             # Auto-save to working directory
-            png_name <- paste0("scatter_", pred, "_vs_", outcome, ".png")
+            png_name <- paste0(.ml_env$student_name, "_scatter_", pred, "_vs_", outcome, ".png")
             .save_plot(png_name)
             graphics::plot(data[[pred]], data[[outcome]],
                            xlab = pred, ylab = outcome,
@@ -112,7 +112,7 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
                               main = plot_title)
 
             # Auto-save to working directory
-            png_name <- paste0("boxplot_", outcome, "_by_", cname, ".png")
+            png_name <- paste0(.ml_env$student_name, "_boxplot_", outcome, "_by_", cname, ".png")
             .save_plot(png_name)
             graphics::boxplot(data[[outcome]] ~ data[[cname]],
                               xlab = cname, ylab = outcome,
@@ -141,7 +141,7 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
                                method = "number", tl.cex = 0.8, number.cex = 0.8)
 
             # Auto-save to working directory
-            png_name <- "correlation_matrix.png"
+            png_name <- paste0(.ml_env$student_name, "_correlation_matrix.png")
             .save_plot(png_name)
             corrplot::corrplot(stats::cor(cor_data), type = "lower",
                                method = "number", tl.cex = 0.8, number.cex = 0.8)

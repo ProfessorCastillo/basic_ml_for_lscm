@@ -6,6 +6,7 @@
 .ml_env <- new.env(parent = emptyenv())
 .ml_env$log <- character(0)
 .ml_env$logging <- FALSE
+.ml_env$student_name <- "student"
 
 #' Start logging.
 #' @noRd

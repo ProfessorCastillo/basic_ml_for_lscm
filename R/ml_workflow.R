@@ -48,7 +48,14 @@ ml_workflow <- function(file_path) {
   .lcat("  4. Evaluate the Model\n")
   .lcat("  5. Test the Model\n\n")
   .lcat("You will make decisions at each step. You can go back to a\n")
-  .lcat("previous step at any time. Let's get started!\n")
+  .lcat("previous step at any time. Let's get started!\n\n")
+
+  # Ask for student's last name (used for file naming)
+  student_name <- .ask("Enter your last name (used for file naming, e.g., Castillo): ")
+  student_name <- gsub("[^a-zA-Z0-9_-]", "", student_name)  # sanitize
+  if (nchar(student_name) == 0L) student_name <- "student"
+  .ml_env$student_name <- student_name
+  .lcat("Files will be named with prefix: ", student_name, "\n")
   .pause()
 
   # State machine: track results from each step
@@ -111,8 +118,8 @@ ml_workflow <- function(file_path) {
   session_log <- .log_stop()
   result$log <- session_log
 
-  # Auto-save log as .txt
-  log_filename <- "ml_workflow_session_log.txt"
+  # Auto-save log as .txt with student name
+  log_filename <- paste0(.ml_env$student_name, "_session_log.txt")
   writeLines(session_log, log_filename)
   cat("Session log saved to: ", log_filename, "\n", sep = "")
 

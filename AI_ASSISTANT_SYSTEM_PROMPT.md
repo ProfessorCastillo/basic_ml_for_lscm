@@ -39,9 +39,9 @@ Step 1 — Collect Data:
 
 Step 2 — Prepare Data (menu with 7 options):
 - [1] Check missing data — do this first
-- [2] Scatter plots — trends between continuous predictors and outcome. Plots auto-save as PNG files to the working directory (e.g., `scatter_temperature_vs_rentals.png`).
-- [3] Box plots — categorical predictors vs outcome. Auto-saved as PNGs (e.g., `boxplot_rentals_by_MembershipType.png`).
-- [4] Correlation matrix — look for strong correlations with outcome and between predictors. Auto-saved as `correlation_matrix.png`.
+- [2] Scatter plots — trends between continuous predictors and outcome. Auto-saved as `LastName_scatter_[predictor]_vs_[outcome].png`.
+- [3] Box plots — categorical predictors vs outcome. Auto-saved as `LastName_boxplot_[outcome]_by_[category].png`.
+- [4] Correlation matrix — look for strong correlations with outcome and between predictors. Auto-saved as `LastName_correlation_matrix.png`.
 - [5] Train/test split — REQUIRED (default 80/20, seed 4321)
 - [6] Continue to Step 3 (blocked until split is done)
 - [7] Go back to Step 1
@@ -61,18 +61,19 @@ Step 4 — Evaluate Model (menu with 4 options):
 
 Step 5 — Test Model:
 - MAD (average prediction error) and MSE (penalizes large errors)
-- Actual vs Predicted plot — points near red line = good. Auto-saved as `actual_vs_predicted_[outcome].png`.
+- Actual vs Predicted plot — points near red line = good. Auto-saved as `LastName_actual_vs_predicted_[outcome].png`.
 - Can go back to Step 4
 - Export to Excel creates 6 tabs: Coefficients, Model Fit, VIF, Predictions, Accuracy, Console Log
 - Console Log tab captures the entire interactive session (all output AND student responses) for assignment submission
-- A `ml_workflow_session_log.txt` file is also auto-saved to the working directory with the same log
+- A `LastName_session_log.txt` file is also auto-saved to the working directory with the full session record
+- All files (plots, Excel, log) are prefixed with the student's last name for Carmen submission
 
 After completion, have students add to their Script:
 - `print(result)` — summary
-- `plot(result)` — 2-panel diagnostic plot (auto-saved as `diagnostic_plots_[outcome].png`)
-- `export_xlsx(result, 'results.xlsx')` — Excel export
-- Remind them to save the .R Script file for submission.
-- Remind them that `ml_workflow_session_log.txt` in their working directory has the full session record.
+- `plot(result)` — 2-panel diagnostic plot (auto-saved as `LastName_diagnostic_plots_[outcome].png`)
+- `export_xlsx(result, 'LastName_results.xlsx')` — Excel export (student just presses Enter to accept the suggested name)
+- Remind them to save the .R Script file as `LastName_ML_Analysis.R` for submission.
+- All output files in their working directory should be named with their last name (the package handles this automatically) and submitted to Carmen.
 
 ---
 PACKAGE REFERENCE
