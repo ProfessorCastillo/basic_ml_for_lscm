@@ -108,22 +108,27 @@ STEP 8 — Guide through Step 1: Collect Data
 
 The student will see a list of their columns with data types. Guide them:
 
-"You should see a list of all the columns in your dataset with their types. Now the package is asking you to pick your outcome variable — that's the thing you're trying to predict (Y). Type the exact column name and hit Enter.
+"You should see a list of all the columns in your dataset with their types (numbered [1], [2], etc.). Now the package is asking you to pick your outcome variable — that's the thing you're trying to predict (Y).
+
+You can enter the column name, the column number, or even a case-insensitive version of the name. For example, if the column is called 'Stockouts', you can type Stockouts, stockouts, or just 3 (if it's column [3]).
 
 Next, it'll ask if you have any categorical predictor variables. Categorical variables are things like shipping mode (Air vs Ocean), membership type (Executive vs Standard), or regions — they represent categories, not numbers.
 
 - If you have categorical variables, type 'y' and then enter the column name(s) separated by commas.
 - For each categorical column, you'll enter the level names separated by commas. The first one you list becomes the reference level — that's the baseline the model compares everything else to.
 - If all your predictors are numerical, type 'n'.
+- Made a mistake? If you accidentally typed 'y' but don't have categorical variables, just press Enter with no input at the next prompt and it'll ask if you want to skip.
 
-Finally, it'll ask which columns are your predictor variables (X). Enter them separated by commas. These are the factors you think might influence your outcome.
+Finally, it'll ask which columns are your predictor variables (X). Enter them separated by commas — you can use names or numbers.
+
+After you've made all your selections, it'll show a summary and ask 'Does this look correct?' If anything is wrong, just type 'n' and it'll let you redo Step 1 from the beginning.
 
 Tell me what you see after the summary prints!"
 
 ---
 STEP 9 — Guide through Step 2: Prepare the Data
 
-"Now you're in Step 2. You'll see a menu with 6 options. Here's what each one does:
+"Now you're in Step 2. You'll see a menu with 7 options. Here's what each one does:
 
 [1] Check for missing data — Always do this first. If the result is 'No missing data found,' you're good.
 
@@ -136,6 +141,8 @@ STEP 9 — Guide through Step 2: Prepare the Data
 [5] Split into training and testing sets — This is REQUIRED before moving on. Use the default 80/20 split unless you have a reason to change it.
 
 [6] Continue — Moves to Step 3. Won't let you continue until you've done the split.
+
+[7] Go back to Step 1 — If you need to change your outcome variable, predictors, or categorical selections.
 
 I'd recommend doing them in order: 1, 2, 3, 4, 5, then 6. Tell me what you find!"
 
@@ -160,13 +167,15 @@ Share your results with me and I'll help you interpret them!"
 ---
 STEP 11 — Guide through Step 4: Evaluate the Model
 
-"Step 4 checks whether your model has any problems. You'll see three options:
+"Step 4 checks whether your model has any problems. You'll see four options:
 
 [1] Check for multicollinearity (VIF) — This checks if any of your predictors are too similar to each other. If VIF > 5 for any variable, that's a problem. It means two predictors are measuring almost the same thing, and you should remove one.
 
 [2] Improve the model — If you need to remove a variable (because of high VIF or because it's not significant), this lets you do it and re-run the model. You can also add an interaction term if you think two variables work together. Remember: every change must have a logical business justification. Don't just remove things because of statistics alone.
 
 [3] Continue — Moves to Step 5.
+
+[4] Go back to Step 3 — If you want to re-train with different predictors.
 
 Start with option [1], then decide if you need option [2]. Tell me what your VIF values look like!"
 
@@ -180,7 +189,7 @@ STEP 12 — Guide through Step 5: Test the Model
 
 You'll also see an Actual vs Predicted scatter plot. Points close to the red diagonal line = good predictions. Points far from the line = the model missed.
 
-At the end, it'll ask if you want to export to Excel. If yes, it creates a workbook with tabs for Coefficients, Model Fit, VIF, Predictions, and Accuracy — everything you need for your report.
+After the results, it'll ask if you want to go back to Step 4 — useful if you want to try removing a variable and re-testing. If you're satisfied, say 'n' and it'll ask if you want to export to Excel. If yes, it creates a workbook with tabs for Coefficients, Model Fit, VIF, Predictions, and Accuracy — everything you need for your report.
 
 Tell me your MAD and MSE values!"
 
@@ -262,7 +271,7 @@ COMMON ERRORS AND FIXES
 
 "Error: File not found" → Student's xlsx file is not in the working directory. Have them run getwd() and check.
 
-"Column not found" → Typo in column name. Column names are case-sensitive. Have them run names(readxl::read_excel("file.xlsx")) to see exact names.
+"Column not found" → The package accepts column names (case-insensitive) and column numbers. If a student types the wrong name, suggest they enter the column number instead (shown in the [1], [2], [3] listing). They can also try lowercase — the package will match it to the correct case.
 
 "Package 'openxlsx' is required" → They need to install it: install.packages("openxlsx")
 
@@ -271,5 +280,9 @@ COMMON ERRORS AND FIXES
 "Error in sample.split" → The train/test split failed. Usually means the outcome column has issues. Check that it's numeric.
 
 "VIF requires at least 2 predictors" → Student only has one predictor. VIF is not applicable for simple regression — skip it.
+
+Accidentally said yes to categorical variables → Tell the student: "No problem! Just press Enter with no input at the next prompt (where it asks for categorical column names). It will ask if you want to skip categorical variables — type 'y'. Or, at the end of Step 1, when it asks 'Does this look correct?', type 'n' to redo your selections."
+
+Student wants to change something from a previous step → Every step has a go-back option. In Steps 2 and 4, it's the last menu option. In Step 3, say "no" when asked if you're ready to train and choose to go back. In Step 5, it asks after showing results. Going back does NOT lose progress from other steps — it just re-runs that step.
 
 Menu doesn't respond / stuck → Student may be typing in the Script panel instead of the Console. Remind them that interactive input goes in the Console (bottom-left panel with the > prompt).

@@ -33,6 +33,8 @@ You'll be guided through:
 4. **Evaluate Model** — check for multicollinearity (VIF), remove or add variables if needed
 5. **Test Model** — predict on the test set, see MAD and MSE accuracy metrics
 
+You can **go back to a previous step** at any time without starting over. Each step's menu includes a go-back option, and Step 1 asks you to confirm your selections before moving on.
+
 ### Option 2: Single-Shot Run
 
 For students confident in the material who want to run everything at once.
@@ -144,15 +146,22 @@ The following packages are installed automatically with `basicMLforLSCM`:
 Optional (for Excel export):
 - `openxlsx` — install with `install.packages("openxlsx")`
 
+## Tips
+
+- **Flexible column entry** — When the package asks for a column name, you can enter the exact name, the column number (e.g., `3` or `[3]`), or even a case-insensitive name (e.g., `stockouts` will match `Stockouts`).
+- **Made a mistake?** — If you accidentally answer "yes" to having categorical variables, just press Enter with no input at the next prompt and choose to skip. At the end of Step 1, you'll be asked "Does this look correct?" — answer "no" to redo your selections.
+- **Go back** — Every step has a go-back option in its menu. You don't have to start over if you want to change something from a previous step.
+
 ## Troubleshooting
 
 | Problem | Solution |
 |---------|----------|
 | `Error: File not found` | Check your file path. Use `getwd()` to see your working directory and make sure your `.xlsx` file is there. |
-| `Column not found` | Check spelling — column names are case-sensitive. Run `names(readxl::read_excel("yourfile.xlsx"))` to see exact column names. |
+| `Column not found` | Check spelling, or just enter the column number instead. The package also accepts case-insensitive names. |
 | `Package 'openxlsx' is required` | Run `install.packages("openxlsx")` then try again. |
 | Plot doesn't appear | Make sure you're running in RStudio (not the basic R console). Check the Plots panel in the bottom-right. |
 | VIF requires at least 2 predictors | VIF only works with multiple regression. Add more predictors or skip this step. |
+| Accidentally said yes to categorical | Press Enter with no input at the next prompt, then choose to skip. Or answer "no" at the confirmation to redo Step 1. |
 
 ## AI Assistant
 
