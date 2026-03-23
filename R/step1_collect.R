@@ -30,79 +30,89 @@ step1_collect <- function(file_path, interactive = TRUE,
   data <- as.data.frame(data)
 
   if (interactive) {
-    .print_header("Step 1: Collect Data")
-    cat("Reading file: ", basename(file_path), "\n", sep = "")
-    cat("Found ", nrow(data), " observations and ", ncol(data), " columns.\n\n", sep = "")
-    cat("Columns:\n")
-    .print_columns(data)
-
-    # --- Outcome variable ---
+    # Outer loop allows restarting Step 1 if the student wants to redo selections
     repeat {
-      outcome <- .ask("\nWhich column is your outcome variable (Y)? Enter the column name: ")
-      check <- .validate_columns(outcome, names(data))
-      if (check$valid) break
-      cat("Column '", outcome, "' not found. Please try again.\n", sep = "")
-    }
+      # Re-read data each time in case factor conversions need to be reset
+      data <- readxl::read_excel(file_path)
+      data <- as.data.frame(data)
 
-    # --- Categorical variables ---
-    categorical <- NULL
-    factor_levels <- NULL
-    has_cat <- .ask_yn("\nDo you have any categorical predictor variables?")
+      .print_header("Step 1: Collect Data")
+      cat("Reading file: ", basename(file_path), "\n", sep = "")
+      cat("Found ", nrow(data), " observations and ", ncol(data), " columns.\n\n", sep = "")
+      cat("Columns:\n")
+      .print_columns(data)
 
-    if (has_cat) {
+      # --- Outcome variable ---
       repeat {
-        cat_input <- .ask("Which column(s) are categorical? Enter name(s) separated by commas: ")
-        categorical <- .parse_comma_list(cat_input)
-        check <- .validate_columns(categorical, names(data))
+        outcome <- .ask("\nWhich column is your outcome variable (Y)? Enter the column name: ")
+        check <- .validate_columns(outcome, names(data))
+        if (check$valid) break
+        cat("Column '", outcome, "' not found. Please try again.\n", sep = "")
+      }
+
+      # --- Categorical variables ---
+      categorical <- NULL
+      factor_levels <- NULL
+      has_cat <- .ask_yn("\nDo you have any categorical predictor variables?")
+
+      if (has_cat) {
+        repeat {
+          cat_input <- .ask("Which column(s) are categorical? Enter name(s) separated by commas: ")
+          categorical <- .parse_comma_list(cat_input)
+          check <- .validate_columns(categorical, names(data))
+          if (check$valid) break
+          cat("Column(s) not found: ", paste(check$bad, collapse = ", "),
+              ". Please try again.\n", sep = "")
+        }
+
+        factor_levels <- list()
+        for (cname in categorical) {
+          lvl_input <- .ask(paste0(
+            "\nWhat are the levels for '", cname,
+            "'? Enter them separated by commas\n",
+            "(the first one listed becomes the reference level): "
+          ))
+          lvls <- .parse_comma_list(lvl_input)
+          factor_levels[[cname]] <- lvls
+          data[[cname]] <- factor(data[[cname]], levels = lvls)
+        }
+      }
+
+      # --- Predictor variables ---
+      available <- setdiff(names(data), outcome)
+      cat("\nAvailable columns (excluding outcome):\n")
+      for (i in seq_along(available)) {
+        cat("  ", available[i], "\n", sep = "")
+      }
+      repeat {
+        pred_input <- .ask("\nWhich columns are your predictor variables (X)? Enter name(s) separated by commas: ")
+        predictors <- .parse_comma_list(pred_input)
+        check <- .validate_columns(predictors, available)
         if (check$valid) break
         cat("Column(s) not found: ", paste(check$bad, collapse = ", "),
             ". Please try again.\n", sep = "")
       }
 
-      factor_levels <- list()
-      for (cname in categorical) {
-        lvl_input <- .ask(paste0(
-          "\nWhat are the levels for '", cname,
-          "'? Enter them separated by commas\n",
-          "(the first one listed becomes the reference level): "
-        ))
-        lvls <- .parse_comma_list(lvl_input)
-        factor_levels[[cname]] <- lvls
-        data[[cname]] <- factor(data[[cname]], levels = lvls)
+      # --- Summary ---
+      .print_subheader("Summary")
+      cat("Outcome:     ", outcome, "\n", sep = "")
+      cont_preds <- setdiff(predictors, categorical)
+      if (length(cont_preds) > 0) {
+        cat("Predictors:  ", paste(cont_preds, collapse = ", "), "\n", sep = "")
       }
-    }
-
-    # --- Predictor variables ---
-    available <- setdiff(names(data), outcome)
-    cat("\nAvailable columns (excluding outcome):\n")
-    for (i in seq_along(available)) {
-      cat("  ", available[i], "\n", sep = "")
-    }
-    repeat {
-      pred_input <- .ask("\nWhich columns are your predictor variables (X)? Enter name(s) separated by commas: ")
-      predictors <- .parse_comma_list(pred_input)
-      check <- .validate_columns(predictors, available)
-      if (check$valid) break
-      cat("Column(s) not found: ", paste(check$bad, collapse = ", "),
-          ". Please try again.\n", sep = "")
-    }
-
-    # --- Summary ---
-    .print_subheader("Summary")
-    cat("Outcome:     ", outcome, "\n", sep = "")
-    cont_preds <- setdiff(predictors, categorical)
-    if (length(cont_preds) > 0) {
-      cat("Predictors:  ", paste(cont_preds, collapse = ", "), "\n", sep = "")
-    }
-    if (!is.null(categorical) && length(categorical) > 0) {
-      for (cname in categorical) {
-        lvls <- factor_levels[[cname]]
-        cat("Categorical: ", cname, " (levels: ", lvls[1], " [ref], ",
-            paste(lvls[-1], collapse = ", "), ")\n", sep = "")
+      if (!is.null(categorical) && length(categorical) > 0) {
+        for (cname in categorical) {
+          lvls <- factor_levels[[cname]]
+          cat("Categorical: ", cname, " (levels: ", lvls[1], " [ref], ",
+              paste(lvls[-1], collapse = ", "), ")\n", sep = "")
+        }
       }
-    }
-    cat("Observations:", nrow(data), "\n")
-    .pause()
+      cat("Observations:", nrow(data), "\n")
+
+      # --- Confirmation ---
+      if (.ask_yn("\nDoes this look correct?")) break
+      cat("\nNo problem -- let's redo Step 1.\n")
+    } # end repeat
 
   } else {
     # --- Non-interactive mode ---

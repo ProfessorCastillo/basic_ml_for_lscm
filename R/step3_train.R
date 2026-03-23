@@ -27,6 +27,10 @@ step3_train <- function(prepare_result, interactive = TRUE) {
     cat("Current predictors: ", paste(predictors, collapse = ", "), "\n", sep = "")
 
     if (!.ask_yn("Ready to train the model with these predictors?")) {
+      if (.ask_yn("Would you like to go back to Step 2?")) {
+        cat("\nGoing back to Step 2...\n")
+        return(list(go_back = TRUE))
+      }
       if (.ask_yn("Would you like to change your predictors?")) {
         available <- setdiff(names(data), outcome)
         cat("\nAvailable columns:\n")

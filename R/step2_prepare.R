@@ -35,13 +35,19 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
       "Create box plots (categorical predictors)",
       "Create correlation matrix (continuous variables)",
       "Split into training and testing sets",
-      "Continue to Step 3 (Train the Model)"
+      "Continue to Step 3 (Train the Model)",
+      "Go back to Step 1 (Collect Data)"
     )
 
     repeat {
       choice <- .menu("Prepare the Data -- select a task:", choices)
 
-      if (choice == 1L) {
+      if (choice == 7L) {
+        # --- Go back ---
+        cat("\nGoing back to Step 1...\n")
+        return(list(go_back = TRUE))
+
+      } else if (choice == 1L) {
         # --- Missing data check ---
         if (!any(is.na(data))) {
           cat("\nNo missing data found. You're good to proceed.\n")

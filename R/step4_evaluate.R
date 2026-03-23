@@ -64,13 +64,19 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
     choices <- c(
       "Check for multicollinearity (VIF)",
       "Improve the model (remove/add variables)",
-      "Continue to Step 5 (Test the Model)"
+      "Continue to Step 5 (Test the Model)",
+      "Go back to Step 3 (Train the Model)"
     )
 
     repeat {
       choice <- .menu("Evaluate the Model -- select a task:", choices)
 
-      if (choice == 1L) {
+      if (choice == 4L) {
+        # --- Go back ---
+        cat("\nGoing back to Step 3...\n")
+        return(list(go_back = TRUE))
+
+      } else if (choice == 1L) {
         # --- VIF ---
         vif_df <- compute_vif(model)
         if (is.null(vif_df)) {

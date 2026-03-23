@@ -64,8 +64,14 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
       )
     print(gg)
 
+    # --- Go back option ---
+    if (.ask_yn("\nWould you like to go back to Step 4 (Evaluate)?")) {
+      cat("\nGoing back to Step 4...\n")
+      return(list(go_back = TRUE))
+    }
+
     # --- Export prompt ---
-    if (.ask_yn("\nWould you like to export all results to an Excel file?")) {
+    if (.ask_yn("Would you like to export all results to an Excel file?")) {
       file_name <- .ask("Enter file name (e.g., results.xlsx): ")
       if (!grepl("\\.xlsx$", file_name, ignore.case = TRUE)) {
         file_name <- paste0(file_name, ".xlsx")

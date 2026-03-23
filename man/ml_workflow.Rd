@@ -15,7 +15,8 @@ An object of class \code{ml_result} (returned invisibly).
 \description{
 Guides the student through the 5-step supervised machine learning
 regression process using interactive console menus. At each step,
-the student makes analytical decisions about their data.
+the student makes analytical decisions about their data. Students
+can go back to a previous step at any time without starting over.
 }
 \details{
 The 5 steps are:
