@@ -27,7 +27,6 @@ step3_train <- function(prepare_result, interactive = TRUE) {
     .lcat("Current predictors: ", paste(predictors, collapse = ", "), "\n", sep = "")
 
     ready <- .ask_yn("Ready to train the model with these predictors?")
-    Sys.sleep(runif(1, min = 3, max = 5))
     if (!ready) {
       if (.ask_yn("Would you like to go back to Step 2?")) {
         .lcat("\nGoing back to Step 2...\n")
@@ -49,6 +48,7 @@ step3_train <- function(prepare_result, interactive = TRUE) {
   }
 
   # --- Build and train ---
+  if (interactive) Sys.sleep(runif(1, min = 3, max = 5))
   formula_str <- paste(outcome, "~", paste(predictors, collapse = " + "))
   formula_obj <- stats::as.formula(formula_str)
   model <- stats::lm(formula_obj, data = train_set)
