@@ -173,6 +173,7 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
           split_ratio <- 0.8
         }
 
+        Sys.sleep(runif(1, min = 3, max = 5))
         set.seed(4321)
         split_flag <- caTools::sample.split(data[[outcome]], SplitRatio = split_ratio)
         train_set <- data[split_flag, ]
