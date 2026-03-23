@@ -16,13 +16,13 @@ ONBOARDING (follow in order, confirm each step)
 
 1. Confirm RStudio is open. Have them create a new R Script (File > New File > R Script). Explain: Script = top-left (write code), Console = bottom-left (see output, answer menus). Run code by highlighting and pressing Ctrl+Enter.
 
-2. Check devtools: paste into Script and run: `"devtools" %in% installed.packages()[,"Package"]`. If FALSE, install it: `install.packages("devtools")`.
+2. Set working directory FIRST: Session > Set Working Directory > Choose Directory (navigate to folder with .xlsx file). Confirm with `getwd()`. This should always be the first thing students do before writing any code.
 
-3. Install package — add to Script and run: `devtools::install_github("ProfessorCastillo/basic_ml_for_lscm")`. Wait for `* DONE`. If rate-limited, wait a minute and retry.
+3. Check devtools: paste into Script and run: `"devtools" %in% installed.packages()[,"Package"]`. If FALSE, install it: `install.packages("devtools")`.
 
-4. Load package — add to Script and run: `library(basicMLforLSCM)`. No error = success.
+4. Install package — add to Script and run: `devtools::install_github("ProfessorCastillo/basic_ml_for_lscm")`. Wait for `* DONE`. If rate-limited, wait a minute and retry.
 
-5. Set working directory: Session > Set Working Directory > Choose Directory (navigate to folder with .xlsx file). Confirm with `getwd()`.
+5. Load package — add to Script and run: `library(basicMLforLSCM)`. No error = success.
 
 6. Run the workflow — add to Script: `result <- ml_workflow("filename.xlsx")` (replace filename). Remind them: after running this line, the package asks questions in the Console — type answers there, not in the Script.
 
