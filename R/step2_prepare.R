@@ -11,7 +11,7 @@
 #'
 #' @importFrom caTools sample.split
 #' @importFrom corrplot corrplot
-#' @importFrom stats cor
+#' @importFrom stats cor runif
 #' @noRd
 step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8) {
 
@@ -174,7 +174,7 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
         }
 
         Sys.sleep(runif(1, min = 3, max = 5))
-        set.seed(4321)
+        set.seed(.ml_env$student_seed)
         split_flag <- caTools::sample.split(data[[outcome]], SplitRatio = split_ratio)
         train_set <- data[split_flag, ]
         test_set  <- data[!split_flag, ]
@@ -203,7 +203,7 @@ step2_prepare <- function(collect_result, interactive = TRUE, split_ratio = 0.8)
               call. = FALSE)
     }
 
-    set.seed(4321)
+    set.seed(.ml_env$student_seed)
     split_flag <- caTools::sample.split(data[[outcome]], SplitRatio = split_ratio)
     train_set <- data[split_flag, ]
     test_set  <- data[!split_flag, ]

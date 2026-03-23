@@ -39,6 +39,8 @@ export_xlsx <- function(x, file) {
   f_stat <- x$model_summary$fstatistic
   f_pvalue <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
   fit_df <- data.frame(
+    Student        = if (!is.null(x$student_name)) x$student_name else NA,
+    Seed           = if (!is.null(x$student_seed)) x$student_seed else NA,
     RSE            = x$rse,
     R_squared      = x$r_squared,
     Adj_R_squared  = x$model_summary$adj.r.squared,

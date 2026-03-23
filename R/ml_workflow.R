@@ -50,12 +50,19 @@ ml_workflow <- function(file_path) {
   .lcat("You will make decisions at each step. You can go back to a\n")
   .lcat("previous step at any time. Let's get started!\n\n")
 
-  # Ask for student's last name (used for file naming)
-  student_name <- .ask("Enter your last name (used for file naming, e.g., Castillo): ")
-  student_name <- gsub("[^a-zA-Z0-9_-]", "", student_name)  # sanitize
+  # Ask for student's OSU name.# (used for file naming and seed generation)
+  student_name <- .ask("Enter your OSU name.# (e.g., castillo.230): ")
+  student_name <- tolower(trimws(student_name))
+  student_name <- gsub("[^a-z0-9._-]", "", student_name)  # sanitize, allow dots
   if (nchar(student_name) == 0L) student_name <- "student"
   .ml_env$student_name <- student_name
+
+  # Generate deterministic seed from student name
+  student_seed <- sum(utf8ToInt(student_name))
+  .ml_env$student_seed <- student_seed
+
   .lcat("Files will be named with prefix: ", student_name, "\n")
+  .log_append("[seed: ", student_seed, "]\n")
   .pause()
 
   # State machine: track results from each step

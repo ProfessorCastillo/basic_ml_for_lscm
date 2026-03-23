@@ -13,6 +13,9 @@
 #'   level in each vector becomes the reference level.
 #' @param split_ratio Numeric between 0 and 1. Proportion of data used for
 #'   training (default 0.8).
+#' @param student_name Character or \code{NULL}. OSU name.# (e.g.,
+#'   \code{"castillo.230"}). Used to generate a unique random seed for the
+#'   train/test split. If \code{NULL}, uses the default seed.
 #'
 #' @return An object of class \code{ml_result} (returned invisibly).
 #'
@@ -35,7 +38,7 @@
 #' @export
 ml_run <- function(file_path, outcome, predictors,
                    categorical = NULL, factor_levels = NULL,
-                   split_ratio = 0.8) {
+                   split_ratio = 0.8, student_name = NULL) {
 
   # --- Input validation ---
   if (!is.character(file_path) || length(file_path) != 1)
@@ -54,6 +57,13 @@ ml_run <- function(file_path, outcome, predictors,
   cat("if you are confident in your variable selections and understand the\n")
   cat("process. For the guided, step-by-step experience, use ml_workflow()\n")
   cat("instead.\n\n")
+
+  # Set seed from student name if provided
+  if (!is.null(student_name)) {
+    student_name <- tolower(trimws(student_name))
+    .ml_env$student_name <- student_name
+    .ml_env$student_seed <- sum(utf8ToInt(student_name))
+  }
 
   confirm <- .ask("Type 'yes' to proceed: ")
   if (tolower(trimws(confirm)) != "yes") {

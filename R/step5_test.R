@@ -89,7 +89,8 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
         train_set = train_set, test_set = test_set, split_ratio = split_ratio,
         model = model, model_summary = model_summary, vif = vif_df,
         predictions = predictions, mad = mad_val, mse = mse_val,
-        r_squared = r_squared, rse = rse, coefficients = coefficients_df
+        r_squared = r_squared, rse = rse, coefficients = coefficients_df,
+        student_name = .ml_env$student_name, student_seed = .ml_env$student_seed
       )
       export_xlsx(result, file_name)
     }
@@ -102,6 +103,7 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
     train_set = train_set, test_set = test_set, split_ratio = split_ratio,
     model = model, model_summary = model_summary, vif = vif_df,
     predictions = predictions, mad = mad_val, mse = mse_val,
-    r_squared = r_squared, rse = rse, coefficients = coefficients_df
+    r_squared = r_squared, rse = rse, coefficients = coefficients_df,
+    student_name = .ml_env$student_name, student_seed = .ml_env$student_seed
   )
 }

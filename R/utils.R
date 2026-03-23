@@ -7,6 +7,7 @@
 .ml_env$log <- character(0)
 .ml_env$logging <- FALSE
 .ml_env$student_name <- "student"
+.ml_env$student_seed <- 4321
 
 #' Start logging.
 #' @noRd

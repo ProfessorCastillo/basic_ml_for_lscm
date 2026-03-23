@@ -7,7 +7,8 @@ new_ml_result <- function(data, outcome, predictors, categorical, factor_levels,
                           train_set, test_set, split_ratio,
                           model, model_summary, vif,
                           predictions, mad, mse, r_squared, rse,
-                          coefficients, log = NULL) {
+                          coefficients, log = NULL,
+                          student_name = NULL, student_seed = NULL) {
   obj <- list(
     data          = data,
     outcome       = outcome,
@@ -26,7 +27,9 @@ new_ml_result <- function(data, outcome, predictors, categorical, factor_levels,
     r_squared     = r_squared,
     rse           = rse,
     coefficients  = coefficients,
-    log           = log
+    log           = log,
+    student_name  = student_name,
+    student_seed  = student_seed
   )
   class(obj) <- "ml_result"
   obj

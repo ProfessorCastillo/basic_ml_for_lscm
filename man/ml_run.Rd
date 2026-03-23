@@ -10,7 +10,8 @@ ml_run(
   predictors,
   categorical = NULL,
   factor_levels = NULL,
-  split_ratio = 0.8
+  split_ratio = 0.8,
+  student_name = NULL
 )
 }
 \arguments{
@@ -29,6 +30,10 @@ level in each vector becomes the reference level.}
 
 \item{split_ratio}{Numeric between 0 and 1. Proportion of data used for
 training (default 0.8).}
+
+\item{student_name}{Character or \code{NULL}. OSU name.# (e.g.,
+\code{"castillo.230"}). Used to generate a unique random seed for the
+train/test split. If \code{NULL}, uses the default seed.}
 }
 \value{
 An object of class \code{ml_result} (returned invisibly).
