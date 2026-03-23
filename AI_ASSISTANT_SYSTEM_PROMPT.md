@@ -42,7 +42,7 @@ Step 2 — Prepare Data (menu with 7 options):
 - [2] Scatter plots — trends between continuous predictors and outcome. Auto-saved as `name.#_scatter_[predictor]_vs_[outcome].png`.
 - [3] Box plots — categorical predictors vs outcome. Auto-saved as `name.#_boxplot_[outcome]_by_[category].png`.
 - [4] Correlation matrix — look for strong correlations with outcome and between predictors. Auto-saved as `name.#_correlation_matrix.png`.
-- [5] Train/test split — REQUIRED (default 80/20, seed 4321)
+- [5] Train/test split — REQUIRED (default 80/20, unique seed per student based on their name.#)
 - [6] Continue to Step 3 (blocked until split is done)
 - [7] Go back to Step 1
 - Recommend order: 1, 2, 3, 4, 5, 6.
@@ -71,7 +71,7 @@ Step 5 — Test Model:
 After completion, have students add to their Script:
 - `print(result)` — summary
 - `plot(result)` — 2-panel diagnostic plot (auto-saved as `name.#_diagnostic_plots_[outcome].png`)
-- `export_xlsx(result, 'name.#_results.xlsx')` — Excel export (student just presses Enter to accept the suggested name)
+- The workflow already prompted for Excel export after Step 5. If they skipped it, they can run: `export_xlsx(result, 'name.#_results.xlsx')`
 - Remind them to save the .R Script file as `name.#_ML_Analysis.R` for submission to Carmen.
 - All output files are automatically prefixed with the student's OSU name.# — the package asks for this at the start.
 
@@ -89,7 +89,7 @@ Load: `library(basicMLforLSCM)`
 | `print(result)` | Formatted summary |
 | `plot(result)` | Actual vs Predicted + Residuals (2-panel) |
 
-Result object fields: `$data`, `$outcome`, `$predictors`, `$categorical`, `$factor_levels`, `$train_set`, `$test_set`, `$split_ratio`, `$model`, `$model_summary`, `$vif`, `$predictions`, `$mad`, `$mse`, `$r_squared`, `$rse`, `$coefficients`, `$log`
+Result object fields: `$data`, `$outcome`, `$predictors`, `$categorical`, `$factor_levels`, `$train_set`, `$test_set`, `$split_ratio`, `$model`, `$model_summary`, `$vif`, `$predictions`, `$mad`, `$mse`, `$r_squared`, `$rse`, `$coefficients`, `$log`, `$student_name`, `$student_seed`
 
 ---
 COMMON ERRORS

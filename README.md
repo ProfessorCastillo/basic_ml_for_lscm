@@ -25,6 +25,8 @@ The guided, step-by-step experience. The package walks you through each decision
 result <- ml_workflow("mydata.xlsx")
 ```
 
+The package will ask for your OSU name.# (e.g., `castillo.230`) at the start. This is used to name all output files and generate a unique train/test split for your analysis.
+
 You'll be guided through:
 
 1. **Collect Data** — identify your outcome variable, categorical predictors, and predictor variables
@@ -76,6 +78,8 @@ print(result)
 plot(result)
 
 # Export everything to Excel (requires openxlsx)
+# The workflow prompts for this automatically at the end.
+# You can also export manually:
 export_xlsx(result, "my_results.xlsx")
 ```
 
@@ -113,7 +117,7 @@ Train/Test Split: 80/20 (600 / 150 observations)
 
 ### Understanding the Excel Export
 
-The `export_xlsx()` function creates one workbook with 5 tabs:
+The `export_xlsx()` function creates one workbook with 6 tabs:
 
 | Tab | Contents |
 |-----|----------|
@@ -147,11 +151,26 @@ The following packages are installed automatically with `basicMLforLSCM`:
 Optional (for Excel export):
 - `openxlsx` — install with `install.packages("openxlsx")`
 
+## Output Files
+
+All output files are automatically prefixed with your OSU name.# and saved to your working directory:
+
+| File | Example |
+|------|---------|
+| Excel export | `castillo.230_results.xlsx` |
+| Session log | `castillo.230_session_log.txt` |
+| Scatter plots | `castillo.230_scatter_Temperature_vs_DeliveryTime.png` |
+| Box plots | `castillo.230_boxplot_DeliveryTime_by_Market.png` |
+| Correlation matrix | `castillo.230_correlation_matrix.png` |
+| Actual vs Predicted | `castillo.230_actual_vs_predicted_DeliveryTime.png` |
+| Diagnostic plots | `castillo.230_diagnostic_plots_DeliveryTime.png` |
+
 ## Tips
 
 - **Flexible column entry** — When the package asks for a column name, you can enter the exact name, the column number (e.g., `3` or `[3]`), or even a case-insensitive name (e.g., `stockouts` will match `Stockouts`).
 - **Made a mistake?** — If you accidentally answer "yes" to having categorical variables, just press Enter with no input at the next prompt and choose to skip. At the end of Step 1, you'll be asked "Does this look correct?" — answer "no" to redo your selections.
 - **Go back** — Every step has a go-back option in its menu. You don't have to start over if you want to change something from a previous step.
+- **Export at the end** — The workflow automatically prompts you to export to Excel after Step 5. Press Enter to accept the suggested filename.
 
 ## Troubleshooting
 
