@@ -45,11 +45,11 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
   if (interactive) {
     .print_header("Step 5: Test the Model")
 
-    .lcat("MAD = ", round(mad_val, 4),
+    .lcat("MAD = ", round(mad_val, 2),
         ": On average, predictions are off by ", round(mad_val, 2),
         " units of ", outcome, ".\n\n", sep = "")
 
-    .lcat("MSE = ", round(mse_val, 4),
+    .lcat("MSE = ", round(mse_val, 2),
         ": Larger errors are penalized more heavily. Use this alongside\n",
         "MAD to get a complete picture of prediction accuracy.\n\n", sep = "")
 

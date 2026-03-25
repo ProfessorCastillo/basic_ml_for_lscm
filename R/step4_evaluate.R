@@ -38,15 +38,15 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
     if (is.matrix(vif_raw)) {
       data.frame(
         Variable     = rownames(vif_raw),
-        GVIF         = round(vif_raw[, "GVIF"], 4),
+        GVIF         = round(vif_raw[, "GVIF"], 2),
         Df           = vif_raw[, "Df"],
-        GVIF_adjusted = round(vif_raw[, "GVIF^(1/(2*Df))"], 4),
+        GVIF_adjusted = round(vif_raw[, "GVIF^(1/(2*Df))"], 2),
         stringsAsFactors = FALSE
       )
     } else {
       data.frame(
         Variable = names(vif_raw),
-        VIF      = round(vif_raw, 4),
+        VIF      = round(vif_raw, 2),
         stringsAsFactors = FALSE
       )
     }
@@ -110,7 +110,7 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
         for (i in seq_len(nrow(coefficients_df))) {
           if (coefficients_df$Variable[i] == "(Intercept)") next
           .lcat("  ", coefficients_df$Variable[i], ": ",
-              formatC(coefficients_df$p.value[i], format = "e", digits = 3), "\n", sep = "")
+              round(coefficients_df$p.value[i], 2), "\n", sep = "")
         }
 
         # Show VIF if computed
@@ -151,13 +151,13 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
 
           # Print updated summary
           display_df <- coefficients_df
-          display_df$Estimate <- round(display_df$Estimate, 4)
-          display_df$Std.Error <- round(display_df$Std.Error, 4)
-          display_df$t.value <- round(display_df$t.value, 4)
-          display_df$p.value <- formatC(display_df$p.value, format = "e", digits = 3)
+          display_df$Estimate <- round(display_df$Estimate, 2)
+          display_df$Std.Error <- round(display_df$Std.Error, 2)
+          display_df$t.value <- round(display_df$t.value, 2)
+          display_df$p.value <- round(display_df$p.value, 2)
           print(display_df, row.names = FALSE)
-          .lcat("\nR-squared: ", round(r_squared, 4),
-              "  |  RSE: ", round(rse, 4), "\n", sep = "")
+          .lcat("\nR-squared: ", round(r_squared, 2),
+              "  |  RSE: ", round(rse, 2), "\n", sep = "")
 
           # Update VIF
           vif_df <- compute_vif(model)
@@ -192,13 +192,13 @@ step4_evaluate <- function(train_result, interactive = TRUE) {
 
               .lcat("\nModel updated with interaction ", inter_input, ".\n\n", sep = "")
               display_df <- coefficients_df
-              display_df$Estimate <- round(display_df$Estimate, 4)
-              display_df$Std.Error <- round(display_df$Std.Error, 4)
-              display_df$t.value <- round(display_df$t.value, 4)
-              display_df$p.value <- formatC(display_df$p.value, format = "e", digits = 3)
+              display_df$Estimate <- round(display_df$Estimate, 2)
+              display_df$Std.Error <- round(display_df$Std.Error, 2)
+              display_df$t.value <- round(display_df$t.value, 2)
+              display_df$p.value <- round(display_df$p.value, 2)
               .lprint(display_df, row.names = FALSE)
-              .lcat("\nR-squared: ", round(r_squared, 4),
-                  "  |  RSE: ", round(rse, 4), "\n", sep = "")
+              .lcat("\nR-squared: ", round(r_squared, 2),
+                  "  |  RSE: ", round(rse, 2), "\n", sep = "")
             } else {
               .lcat("Variable(s) not found: ", paste(check$bad, collapse = ", "),
                   ". Interaction not added.\n", sep = "")

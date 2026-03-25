@@ -73,10 +73,10 @@ step3_train <- function(prepare_result, interactive = TRUE) {
   if (interactive) {
     .print_subheader("Coefficients")
     display_df <- coefficients_df
-    display_df$Estimate <- round(display_df$Estimate, 4)
-    display_df$Std.Error <- round(display_df$Std.Error, 4)
-    display_df$t.value <- round(display_df$t.value, 4)
-    display_df$p.value <- formatC(display_df$p.value, format = "e", digits = 3)
+    display_df$Estimate <- round(display_df$Estimate, 2)
+    display_df$Std.Error <- round(display_df$Std.Error, 2)
+    display_df$t.value <- round(display_df$t.value, 2)
+    display_df$p.value <- round(display_df$p.value, 2)
     .lprint(display_df, row.names = FALSE)
 
     # --- Interpretations for each predictor ---
@@ -101,7 +101,7 @@ step3_train <- function(prepare_result, interactive = TRUE) {
             level_name <- substring(vname, nchar(cname) + 1)
             ref_level <- factor_levels[[cname]][1]
             .lcat("  ", vname, ": ", level_name, " is associated with a ",
-                round(beta, 4), " difference in ", outcome,
+                round(beta, 2), " difference in ", outcome,
                 " compared to ", ref_level, ".", sig_text, "\n", sep = "")
             is_cat_level <- TRUE
             break
@@ -110,28 +110,28 @@ step3_train <- function(prepare_result, interactive = TRUE) {
       }
       if (!is_cat_level) {
         .lcat("  ", vname, ": A 1-unit increase in ", vname,
-            " is associated with a ", round(beta, 4),
+            " is associated with a ", round(beta, 2),
             " change in ", outcome, ".", sig_text, "\n", sep = "")
       }
     }
 
     # --- Model fit ---
     .print_subheader("Model Fit")
-    .lcat("RSE = ", round(rse, 4),
+    .lcat("RSE = ", round(rse, 2),
         ". This means your predictions will typically be off by about +/- ",
         round(rse, 2), " units of ", outcome,
         ". A smaller RSE means more precise predictions.\n\n", sep = "")
 
-    .lcat("R-squared = ", round(r_squared, 4),
-        ". This means ", round(r_squared * 100, 1),
+    .lcat("R-squared = ", round(r_squared, 2),
+        ". This means ", round(r_squared * 100, 2),
         "% of the variation in ", outcome,
         " is explained by your predictors. The closer to 1 (100%), the\n",
         "better your model fits the data. The remaining ",
-        round((1 - r_squared) * 100, 1),
+        round((1 - r_squared) * 100, 2),
         "% is unexplained -- it could be random noise\n",
         "or factors you haven't included.\n\n", sep = "")
 
-    .lcat("F-statistic p-value = ", formatC(f_pvalue, format = "e", digits = 3),
+    .lcat("F-statistic p-value = ", round(f_pvalue, 2),
         ". This tells you whether your model as a whole is statistically\n",
         "significant. ", sep = "")
     if (f_pvalue < 0.05) {

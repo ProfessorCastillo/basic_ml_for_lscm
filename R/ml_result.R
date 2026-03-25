@@ -65,15 +65,15 @@ print.ml_result <- function(x, ...) {
   }
 
   cat("\n--- Model Fit ---\n")
-  cat("R-squared:              ", round(x$r_squared, 4), "\n", sep = "")
-  cat("Residual Standard Error:", round(x$rse, 4), "\n")
+  cat("R-squared:              ", round(x$r_squared, 2), "\n", sep = "")
+  cat("Residual Standard Error:", round(x$rse, 2), "\n")
 
   cat("\n--- Coefficients ---\n")
   coef_display <- x$coefficients
-  coef_display$Estimate <- round(coef_display$Estimate, 4)
-  coef_display$Std.Error <- round(coef_display$Std.Error, 4)
-  coef_display$t.value <- round(coef_display$t.value, 4)
-  coef_display$p.value <- formatC(coef_display$p.value, format = "e", digits = 3)
+  coef_display$Estimate <- round(coef_display$Estimate, 2)
+  coef_display$Std.Error <- round(coef_display$Std.Error, 2)
+  coef_display$t.value <- round(coef_display$t.value, 2)
+  coef_display$p.value <- round(coef_display$p.value, 2)
   print(coef_display, row.names = FALSE)
 
   if (!is.null(x$vif)) {
@@ -82,8 +82,8 @@ print.ml_result <- function(x, ...) {
   }
 
   cat("\n--- Predictive Accuracy (Test Set) ---\n")
-  cat("MAD:", round(x$mad, 4), "\n")
-  cat("MSE:", round(x$mse, 4), "\n")
+  cat("MAD:", round(x$mad, 2), "\n")
+  cat("MSE:", round(x$mse, 2), "\n")
 
   cat("\nTrain/Test Split: ", x$split_ratio * 100, "/", (1 - x$split_ratio) * 100,
       " (", nrow(x$train_set), " / ", nrow(x$test_set), " observations)\n", sep = "")

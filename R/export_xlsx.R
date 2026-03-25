@@ -31,26 +31,31 @@ export_xlsx <- function(x, file) {
 
   wb <- openxlsx::createWorkbook()
 
-  # Tab 1: Coefficients
+  # Tab 1: Coefficients (rounded to 2 decimal places)
+  coef_export <- x$coefficients
+  coef_export$Estimate <- round(coef_export$Estimate, 2)
+  coef_export$Std.Error <- round(coef_export$Std.Error, 2)
+  coef_export$t.value <- round(coef_export$t.value, 2)
+  coef_export$p.value <- round(coef_export$p.value, 2)
   openxlsx::addWorksheet(wb, "Coefficients")
-  openxlsx::writeData(wb, "Coefficients", x$coefficients)
+  openxlsx::writeData(wb, "Coefficients", coef_export)
 
-  # Tab 2: Model Fit
+  # Tab 2: Model Fit (rounded to 2 decimal places)
   f_stat <- x$model_summary$fstatistic
   f_pvalue <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
   fit_df <- data.frame(
     Student        = if (!is.null(x$student_name)) x$student_name else NA,
     Seed           = if (!is.null(x$student_seed)) x$student_seed else NA,
-    RSE            = x$rse,
-    R_squared      = x$r_squared,
-    Adj_R_squared  = x$model_summary$adj.r.squared,
-    F_statistic    = f_stat[1],
-    F_pvalue       = f_pvalue
+    RSE            = round(x$rse, 2),
+    R_squared      = round(x$r_squared, 2),
+    Adj_R_squared  = round(x$model_summary$adj.r.squared, 2),
+    F_statistic    = round(f_stat[1], 2),
+    F_pvalue       = round(f_pvalue, 2)
   )
   openxlsx::addWorksheet(wb, "Model Fit")
   openxlsx::writeData(wb, "Model Fit", fit_df)
 
-  # Tab 3: VIF
+  # Tab 3: VIF (already rounded in compute_vif)
   openxlsx::addWorksheet(wb, "VIF")
   if (!is.null(x$vif)) {
     openxlsx::writeData(wb, "VIF", x$vif)
@@ -59,12 +64,16 @@ export_xlsx <- function(x, file) {
                         data.frame(Note = "VIF not applicable (single predictor)"))
   }
 
-  # Tab 4: Predictions
+  # Tab 4: Predictions (rounded to 2 decimal places)
+  pred_export <- x$predictions
+  pred_export$Predicted <- round(pred_export$Predicted, 2)
+  pred_export$Error <- round(pred_export$Error, 2)
+  pred_export$Absolute_Error <- round(pred_export$Absolute_Error, 2)
   openxlsx::addWorksheet(wb, "Predictions")
-  openxlsx::writeData(wb, "Predictions", x$predictions)
+  openxlsx::writeData(wb, "Predictions", pred_export)
 
-  # Tab 5: Accuracy
-  acc_df <- data.frame(MAD = x$mad, MSE = x$mse)
+  # Tab 5: Accuracy (rounded to 2 decimal places)
+  acc_df <- data.frame(MAD = round(x$mad, 2), MSE = round(x$mse, 2))
   openxlsx::addWorksheet(wb, "Accuracy")
   openxlsx::writeData(wb, "Accuracy", acc_df)
 
