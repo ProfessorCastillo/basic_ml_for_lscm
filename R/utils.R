@@ -134,6 +134,18 @@
   list(resolved = resolved, bad = bad, valid = length(bad) == 0L)
 }
 
+#' Build the output file name prefix from student name and project name.
+#' Returns "studentname_projectname" or "studentname" if no project name is set.
+#' @noRd
+.file_prefix <- function() {
+  pn <- .ml_env$project_name
+  if (!is.null(pn) && nchar(pn) > 0L) {
+    paste0(.ml_env$student_name, "_", pn)
+  } else {
+    .ml_env$student_name
+  }
+}
+
 #' Print a section header.
 #' @noRd
 .print_header <- function(text) {
