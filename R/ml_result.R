@@ -8,7 +8,8 @@ new_ml_result <- function(data, outcome, predictors, categorical, factor_levels,
                           model, model_summary, vif,
                           predictions, mad, mse, r_squared, rse,
                           coefficients, log = NULL,
-                          student_name = NULL, student_seed = NULL) {
+                          student_name = NULL, student_seed = NULL,
+                          project_name = NULL) {
   obj <- list(
     data          = data,
     outcome       = outcome,
@@ -29,7 +30,8 @@ new_ml_result <- function(data, outcome, predictors, categorical, factor_levels,
     coefficients  = coefficients,
     log           = log,
     student_name  = student_name,
-    student_seed  = student_seed
+    student_seed  = student_seed,
+    project_name  = project_name
   )
   class(obj) <- "ml_result"
   obj
@@ -124,7 +126,10 @@ plot.ml_result <- function(x, ...) {
   graphics::abline(h = 0, col = "red", lwd = 2)
 
   # Auto-save to working directory
-  name_prefix <- if (.ml_env$logging || nchar(.ml_env$student_name) > 0) .ml_env$student_name else "student"
+  pn <- .ml_env$project_name
+  name_prefix <- if (.ml_env$logging || nchar(.ml_env$student_name) > 0) {
+    if (!is.null(pn) && nchar(pn) > 0L) paste0(.ml_env$student_name, "_", pn) else .ml_env$student_name
+  } else "student"
   png_name <- paste0(name_prefix, "_diagnostic_plots_", x$outcome, ".png")
   grDevices::png(png_name, width = 1200, height = 600, res = 120)
   graphics::par(mfrow = c(1, 2))

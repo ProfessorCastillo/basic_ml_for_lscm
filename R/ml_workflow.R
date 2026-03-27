@@ -61,7 +61,15 @@ ml_workflow <- function(file_path) {
   student_seed <- sum(utf8ToInt(student_name))
   .ml_env$student_seed <- student_seed
 
-  .lcat("Files will be named with prefix: ", student_name, "\n")
+  # Ask for a short project name to differentiate file names
+  project_name <- .ask("Enter a short project name for your files (e.g., ecommerce, bikes): ")
+  project_name <- tolower(trimws(project_name))
+  project_name <- gsub("[^a-z0-9._-]", "", project_name)
+  .ml_env$project_name <- project_name
+
+  file_prefix <- if (nchar(project_name) > 0L) paste0(student_name, "_", project_name) else student_name
+
+  .lcat("Files will be named with prefix: ", file_prefix, "\n")
   .log_append("[seed: ", student_seed, "]\n")
   .pause()
 
@@ -124,15 +132,16 @@ ml_workflow <- function(file_path) {
   result$log <- session_log
   result$student_name <- .ml_env$student_name
   result$student_seed <- .ml_env$student_seed
+  result$project_name <- .ml_env$project_name
 
-  # Auto-save log as .txt with student name
-  log_filename <- paste0(.ml_env$student_name, "_session_log.txt")
+  # Auto-save log as .txt with student name and project name
+  log_filename <- paste0(file_prefix, "_session_log.txt")
   writeLines(session_log, log_filename)
   cat("Session log saved to: ", log_filename, "\n", sep = "")
 
   # --- Export prompt (after log is attached) ---
   if (.ask_yn("Would you like to export all results to an Excel file?")) {
-    suggested <- paste0(.ml_env$student_name, "_results.xlsx")
+    suggested <- paste0(file_prefix, "_results.xlsx")
     file_name <- .ask(paste0("Enter file name or press Enter to accept [", suggested, "]: "))
     if (nchar(trimws(file_name)) == 0L) file_name <- suggested
     if (!grepl("\\.xlsx$", file_name, ignore.case = TRUE)) {

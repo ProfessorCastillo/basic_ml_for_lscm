@@ -65,7 +65,9 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
     print(gg)
 
     # Auto-save to working directory
-    png_name <- paste0(.ml_env$student_name, "_actual_vs_predicted_", outcome, ".png")
+    pn <- .ml_env$project_name
+    name_prefix <- if (!is.null(pn) && nchar(pn) > 0L) paste0(.ml_env$student_name, "_", pn) else .ml_env$student_name
+    png_name <- paste0(name_prefix, "_actual_vs_predicted_", outcome, ".png")
     ggplot2::ggsave(png_name, plot = gg, width = 7, height = 5, dpi = 120)
     .lcat("  Plot saved to: ", png_name, "\n", sep = "")
 
@@ -85,6 +87,7 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
     model = model, model_summary = model_summary, vif = vif_df,
     predictions = predictions, mad = mad_val, mse = mse_val,
     r_squared = r_squared, rse = rse, coefficients = coefficients_df,
-    student_name = .ml_env$student_name, student_seed = .ml_env$student_seed
+    student_name = .ml_env$student_name, student_seed = .ml_env$student_seed,
+    project_name = .ml_env$project_name
   )
 }

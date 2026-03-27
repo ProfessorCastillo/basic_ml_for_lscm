@@ -45,6 +45,7 @@ export_xlsx <- function(x, file) {
   f_pvalue <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
   fit_df <- data.frame(
     Student        = if (!is.null(x$student_name)) x$student_name else NA,
+    Project        = if (!is.null(x$project_name)) x$project_name else NA,
     Seed           = if (!is.null(x$student_seed)) x$student_seed else NA,
     RSE            = round(x$rse, 2),
     R_squared      = round(x$r_squared, 2),
