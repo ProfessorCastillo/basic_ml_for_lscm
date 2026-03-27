@@ -18,9 +18,9 @@ Imports:
     ggplot2,
     rlang,
     stats,
-    graphics
+    graphics,
+    openxlsx
 Suggests:
-    openxlsx,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.3.3
