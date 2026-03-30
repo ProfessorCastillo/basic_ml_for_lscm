@@ -11,7 +11,8 @@ ml_run(
   categorical = NULL,
   factor_levels = NULL,
   split_ratio = 0.8,
-  student_name = NULL
+  student_name = NULL,
+  seed = NULL
 )
 }
 \arguments{
@@ -34,6 +35,10 @@ training (default 0.8).}
 \item{student_name}{Character or \code{NULL}. OSU name.# (e.g.,
 \code{"castillo.230"}). Used to generate a unique random seed for the
 train/test split. If \code{NULL}, uses the default seed.}
+
+\item{seed}{Numeric or \code{NULL}. If provided, overrides the seed
+derived from \code{student_name}. Use this to reproduce results with
+a specific seed (e.g., \code{seed = 4321}).}
 }
 \value{
 An object of class \code{ml_result} (returned invisibly).

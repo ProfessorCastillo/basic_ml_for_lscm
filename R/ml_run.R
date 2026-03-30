@@ -16,6 +16,9 @@
 #' @param student_name Character or \code{NULL}. OSU name.# (e.g.,
 #'   \code{"castillo.230"}). Used to generate a unique random seed for the
 #'   train/test split. If \code{NULL}, uses the default seed.
+#' @param seed Numeric or \code{NULL}. If provided, overrides the seed
+#'   derived from \code{student_name}. Use this to reproduce results with
+#'   a specific seed (e.g., \code{seed = 4321}).
 #'
 #' @return An object of class \code{ml_result} (returned invisibly).
 #'
@@ -38,7 +41,8 @@
 #' @export
 ml_run <- function(file_path, outcome, predictors,
                    categorical = NULL, factor_levels = NULL,
-                   split_ratio = 0.8, student_name = NULL) {
+                   split_ratio = 0.8, student_name = NULL,
+                   seed = NULL) {
 
   # --- Input validation ---
   if (!is.character(file_path) || length(file_path) != 1)
@@ -58,8 +62,10 @@ ml_run <- function(file_path, outcome, predictors,
   cat("process. For the guided, step-by-step experience, use ml_workflow()\n")
   cat("instead.\n\n")
 
-  # Set seed from student name if provided
-  if (!is.null(student_name)) {
+  # Set seed: explicit seed > student_name > default
+  if (!is.null(seed)) {
+    .ml_env$student_seed <- as.integer(seed)
+  } else if (!is.null(student_name)) {
     student_name <- tolower(trimws(student_name))
     .ml_env$student_name <- student_name
     .ml_env$student_seed <- sum(utf8ToInt(student_name))
