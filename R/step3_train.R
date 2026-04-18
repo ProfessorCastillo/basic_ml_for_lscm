@@ -49,7 +49,7 @@ step3_train <- function(prepare_result, interactive = TRUE) {
 
   # --- Build and train ---
   if (interactive) Sys.sleep(runif(1, min = 3, max = 5))
-  formula_str <- paste(outcome, "~", paste(predictors, collapse = " + "))
+  formula_str <- paste(.bt(outcome), "~", paste(.bt(predictors), collapse = " + "))
   formula_obj <- stats::as.formula(formula_str)
   model <- stats::lm(formula_obj, data = train_set)
   model_summary <- summary(model)

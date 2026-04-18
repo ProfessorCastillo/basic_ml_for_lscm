@@ -134,6 +134,20 @@
   list(resolved = resolved, bad = bad, valid = length(bad) == 0L)
 }
 
+#' Wrap column names in backticks if they are non-syntactic (spaces, etc.).
+#' @noRd
+.bt <- function(x) {
+  vapply(x, function(nm) {
+    if (make.names(nm) != nm) paste0("`", nm, "`") else nm
+  }, character(1), USE.NAMES = FALSE)
+}
+
+#' Sanitize a string for use in a file name (replace non-alphanumeric with _).
+#' @noRd
+.safe_name <- function(x) {
+  gsub("[^a-zA-Z0-9._-]", "_", x)
+}
+
 #' Build the output file name prefix from student name and project name.
 #' Returns "studentname_projectname" or "studentname" if no project name is set.
 #' @noRd

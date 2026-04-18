@@ -39,8 +39,8 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
   )
 
   # --- Accuracy metrics ---
-  mad_val <- mean(predictions$Absolute_Error)
-  mse_val <- mean(predictions$Error^2)
+  mad_val <- mean(predictions$Absolute_Error, na.rm = TRUE)
+  mse_val <- mean(predictions$Error^2, na.rm = TRUE)
 
   if (interactive) {
     .print_header("Step 5: Test the Model")
@@ -65,7 +65,7 @@ step5_test <- function(evaluate_result, interactive = TRUE) {
     print(gg)
 
     # Auto-save to working directory
-    png_name <- paste0(.file_prefix(), "_actual_vs_predicted_", outcome, ".png")
+    png_name <- paste0(.file_prefix(), "_actual_vs_predicted_", .safe_name(outcome), ".png")
     ggplot2::ggsave(png_name, plot = gg, width = 7, height = 5, dpi = 120)
     .lcat("  Plot saved to: ", png_name, "\n", sep = "")
 

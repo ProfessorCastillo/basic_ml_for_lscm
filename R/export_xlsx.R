@@ -23,66 +23,128 @@
 #'
 #' @export
 export_xlsx <- function(x, file) {
-  if (!inherits(x, "ml_result"))
-    stop("x must be an ml_result object from ml_workflow() or ml_run().", call. = FALSE)
+  if (!inherits(x, "ml_result") && !inherits(x, "ml_result_class"))
+    stop("x must be an ml_result or ml_result_class object.", call. = FALSE)
   if (!requireNamespace("openxlsx", quietly = TRUE))
     stop("Package 'openxlsx' is required. Install with: install.packages('openxlsx')",
          call. = FALSE)
 
   wb <- openxlsx::createWorkbook()
 
-  # Tab 1: Coefficients (rounded to 2 decimal places)
-  coef_export <- x$coefficients
-  coef_export$Estimate <- round(coef_export$Estimate, 2)
-  coef_export$Std.Error <- round(coef_export$Std.Error, 2)
-  coef_export$t.value <- round(coef_export$t.value, 2)
-  coef_export$p.value <- round(coef_export$p.value, 2)
-  openxlsx::addWorksheet(wb, "Coefficients")
-  openxlsx::writeData(wb, "Coefficients", coef_export)
+  if (inherits(x, "ml_result_class")) {
+    # ---- Classification export ----
 
-  # Tab 2: Model Fit (rounded to 2 decimal places)
-  f_stat <- x$model_summary$fstatistic
-  f_pvalue <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
-  fit_df <- data.frame(
-    Student        = if (!is.null(x$student_name)) x$student_name else NA,
-    Project        = if (!is.null(x$project_name)) x$project_name else NA,
-    Seed           = if (!is.null(x$student_seed)) x$student_seed else NA,
-    RSE            = round(x$rse, 2),
-    R_squared      = round(x$r_squared, 2),
-    Adj_R_squared  = round(x$model_summary$adj.r.squared, 2),
-    F_statistic    = round(f_stat[1], 2),
-    F_pvalue       = round(f_pvalue, 2)
-  )
-  openxlsx::addWorksheet(wb, "Model Fit")
-  openxlsx::writeData(wb, "Model Fit", fit_df)
+    # Tab 1: Coefficients (with Odds Ratios)
+    coef_export <- x$coefficients
+    coef_export$Estimate <- round(coef_export$Estimate, 2)
+    coef_export$Std.Error <- round(coef_export$Std.Error, 2)
+    coef_export$z.value <- round(coef_export$z.value, 2)
+    coef_export$p.value <- round(coef_export$p.value, 2)
+    coef_export$Odds_Ratio <- round(coef_export$Odds_Ratio, 2)
+    openxlsx::addWorksheet(wb, "Coefficients")
+    openxlsx::writeData(wb, "Coefficients", coef_export)
 
-  # Tab 3: VIF (already rounded in compute_vif)
-  openxlsx::addWorksheet(wb, "VIF")
-  if (!is.null(x$vif)) {
-    openxlsx::writeData(wb, "VIF", x$vif)
+    # Tab 2: Model Fit
+    pseudo_r2 <- 1 - (x$model$deviance / x$model$null.deviance)
+    fit_df <- data.frame(
+      Student         = if (!is.null(x$student_name)) x$student_name else NA,
+      Project         = if (!is.null(x$project_name)) x$project_name else NA,
+      Seed            = if (!is.null(x$student_seed)) x$student_seed else NA,
+      Model_Type      = "Logistic Regression (Binary)",
+      Positive_Class  = x$positive_class,
+      Threshold       = x$threshold,
+      AIC             = round(x$model$aic, 2),
+      Pseudo_R_squared = round(pseudo_r2, 2),
+      Accuracy        = round(x$accuracy * 100, 2)
+    )
+    openxlsx::addWorksheet(wb, "Model Fit")
+    openxlsx::writeData(wb, "Model Fit", fit_df)
+
+    # Tab 3: VIF
+    openxlsx::addWorksheet(wb, "VIF")
+    if (!is.null(x$vif)) {
+      openxlsx::writeData(wb, "VIF", x$vif)
+    } else {
+      openxlsx::writeData(wb, "VIF",
+                          data.frame(Note = "VIF not applicable (single predictor)"))
+    }
+
+    # Tab 4: Confusion Matrix
+    cm_df <- as.data.frame.matrix(x$confusion_matrix)
+    cm_df <- cbind(Predicted = rownames(cm_df), cm_df)
+    rownames(cm_df) <- NULL
+    openxlsx::addWorksheet(wb, "Confusion Matrix")
+    openxlsx::writeData(wb, "Confusion Matrix", cm_df)
+
+    # Tab 5: Predictions
+    pred_export <- x$predictions
+    pred_export$Probability <- round(pred_export$Probability, 4)
+    openxlsx::addWorksheet(wb, "Predictions")
+    openxlsx::writeData(wb, "Predictions", pred_export)
+
+    # Tab 6: Console Log
+    if (!is.null(x$log) && length(x$log) > 0) {
+      log_df <- data.frame(Console_Output = x$log)
+      openxlsx::addWorksheet(wb, "Console Log")
+      openxlsx::writeData(wb, "Console Log", log_df)
+    }
+
   } else {
-    openxlsx::writeData(wb, "VIF",
-                        data.frame(Note = "VIF not applicable (single predictor)"))
-  }
+    # ---- Regression export (existing) ----
 
-  # Tab 4: Predictions (rounded to 2 decimal places)
-  pred_export <- x$predictions
-  pred_export$Predicted <- round(pred_export$Predicted, 2)
-  pred_export$Error <- round(pred_export$Error, 2)
-  pred_export$Absolute_Error <- round(pred_export$Absolute_Error, 2)
-  openxlsx::addWorksheet(wb, "Predictions")
-  openxlsx::writeData(wb, "Predictions", pred_export)
+    # Tab 1: Coefficients (rounded to 2 decimal places)
+    coef_export <- x$coefficients
+    coef_export$Estimate <- round(coef_export$Estimate, 2)
+    coef_export$Std.Error <- round(coef_export$Std.Error, 2)
+    coef_export$t.value <- round(coef_export$t.value, 2)
+    coef_export$p.value <- round(coef_export$p.value, 2)
+    openxlsx::addWorksheet(wb, "Coefficients")
+    openxlsx::writeData(wb, "Coefficients", coef_export)
 
-  # Tab 5: Accuracy (rounded to 2 decimal places)
-  acc_df <- data.frame(MAD = round(x$mad, 2), MSE = round(x$mse, 2))
-  openxlsx::addWorksheet(wb, "Accuracy")
-  openxlsx::writeData(wb, "Accuracy", acc_df)
+    # Tab 2: Model Fit (rounded to 2 decimal places)
+    f_stat <- x$model_summary$fstatistic
+    f_pvalue <- stats::pf(f_stat[1], f_stat[2], f_stat[3], lower.tail = FALSE)
+    fit_df <- data.frame(
+      Student        = if (!is.null(x$student_name)) x$student_name else NA,
+      Project        = if (!is.null(x$project_name)) x$project_name else NA,
+      Seed           = if (!is.null(x$student_seed)) x$student_seed else NA,
+      RSE            = round(x$rse, 2),
+      R_squared      = round(x$r_squared, 2),
+      Adj_R_squared  = round(x$model_summary$adj.r.squared, 2),
+      F_statistic    = round(f_stat[1], 2),
+      F_pvalue       = round(f_pvalue, 2)
+    )
+    openxlsx::addWorksheet(wb, "Model Fit")
+    openxlsx::writeData(wb, "Model Fit", fit_df)
 
-  # Tab 6: Console Log (if available)
-  if (!is.null(x$log) && length(x$log) > 0) {
-    log_df <- data.frame(Console_Output = x$log)
-    openxlsx::addWorksheet(wb, "Console Log")
-    openxlsx::writeData(wb, "Console Log", log_df)
+    # Tab 3: VIF (already rounded in compute_vif)
+    openxlsx::addWorksheet(wb, "VIF")
+    if (!is.null(x$vif)) {
+      openxlsx::writeData(wb, "VIF", x$vif)
+    } else {
+      openxlsx::writeData(wb, "VIF",
+                          data.frame(Note = "VIF not applicable (single predictor)"))
+    }
+
+    # Tab 4: Predictions (rounded to 2 decimal places)
+    pred_export <- x$predictions
+    pred_export$Predicted <- round(pred_export$Predicted, 2)
+    pred_export$Error <- round(pred_export$Error, 2)
+    pred_export$Absolute_Error <- round(pred_export$Absolute_Error, 2)
+    openxlsx::addWorksheet(wb, "Predictions")
+    openxlsx::writeData(wb, "Predictions", pred_export)
+
+    # Tab 5: Accuracy (rounded to 2 decimal places)
+    acc_df <- data.frame(MAD = round(x$mad, 2), MSE = round(x$mse, 2))
+    openxlsx::addWorksheet(wb, "Accuracy")
+    openxlsx::writeData(wb, "Accuracy", acc_df)
+
+    # Tab 6: Console Log (if available)
+    if (!is.null(x$log) && length(x$log) > 0) {
+      log_df <- data.frame(Console_Output = x$log)
+      openxlsx::addWorksheet(wb, "Console Log")
+      openxlsx::writeData(wb, "Console Log", log_df)
+    }
   }
 
   openxlsx::saveWorkbook(wb, file, overwrite = TRUE)
